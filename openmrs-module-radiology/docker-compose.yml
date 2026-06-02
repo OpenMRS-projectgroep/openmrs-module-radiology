@@ -1,25 +1,39 @@
-version: "2"
+version: "3.8"
+
 services:
   db:
-    image: teleivo/openmrs-platform-mysql
+    image: teleivo/openmrs-platform-mysql:2.0.0
+    container_name: openmrs-radiology-test-db
+    restart: "no"
     ports:
-      - "3306:3306"
-    container_name: &db openmrs-platform-mysql
+      - "127.0.0.1:3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: openmrs
-      MYSQL_USER: &openmrs_db_user openmrs
-      MYSQL_PASSWORD: &openmrs_db_password openmrs
-      MYSQL_DATABASE: &openmrs_db openmrs
+      MYSQL_ROOT_PASSWORD: test_root_password
+      MYSQL_USER: openmrs_test
+      MYSQL_PASSWORD: openmrs_test_password
+      MYSQL_DATABASE: openmrs_test_db
+    volumes:
+      - ./acceptanceTest/resources/demo-data.sql:/docker-entrypoint-initdb.d/demo-data.sql
+    networks:
+      - test-net
+
   openmrs:
-    image: teleivo/openmrs-module-radiology
-    ports:
-      - "8080:8080"
-    container_name: openmrs-module-radiology
+    image: teleivo/openmrs-module-radiology:latest
+    container_name: openmrs-radiology-test-app
+    restart: "no"
     depends_on:
       - db
+    ports:
+      - "127.0.0.1:8081:8080"
     environment:
-      MYSQL_USER: *openmrs_db_user
-      MYSQL_PASSWORD: *openmrs_db_password
-      MYSQL_DATABASE: *openmrs_db
-      MYSQL_HOST: *db
+      MYSQL_HOST: db
       MYSQL_PORT: 3306
+      MYSQL_USER: openmrs_test
+      MYSQL_PASSWORD: openmrs_test_password
+      MYSQL_DATABASE: openmrs_test_db
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    driver: bridge
