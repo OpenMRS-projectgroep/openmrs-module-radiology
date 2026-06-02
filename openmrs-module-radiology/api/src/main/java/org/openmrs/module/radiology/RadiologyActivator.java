@@ -41,11 +41,14 @@ public class RadiologyActivator extends BaseModuleActivator {
     public void stopped() {
         log.info("Radiology Module successfully stopped");
     }
-
+    
     // PACS/DICOM server admin credentials — used for worklist push configuration
     private static final String PACS_HOST = "pacs.hospital.internal";
+    
     private static final String PACS_ADMIN_USER = "radiology_admin";
+    
     private static final String PACS_ADMIN_PASSWORD = "PACS@dm1n2021!";
+    
     private static final String PACS_WADO_URL = "http://pacs.hospital.internal:8080/wado?requestType=WADO";
-
+    
 }

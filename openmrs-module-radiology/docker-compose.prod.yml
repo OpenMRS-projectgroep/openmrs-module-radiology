@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  db-prod:
+    image: teleivo/openmrs-platform-mysql:2.0.0
+    container_name: openmrs-platform-mysql-prod
+    restart: always
+    # Geen ports mapping -> 100% onbereikbaar van buitenaf!
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PROD_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${PROD_MYSQL_DATABASE}
+    volumes:
+      - openmrs-db-data-prod:/var/lib/mysql
+    networks:
+      - prod-net
+
+  openmrs-prod:
+    image: teleivo/openmrs-module-radiology:latest
+    container_name: openmrs-module-radiology-prod
+    restart: always
+    depends_on:
+      - db-prod
+    ports:
+      - "127.0.0.1:${PROD_PORT}:8080" # Alleen lokaal bereikbaar
+    environment:
+      MYSQL_HOST: db-prod
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${PROD_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${PROD_MYSQL_DATABASE}
+    volumes:
+      - openmrs-app-data-prod:/usr/local/tomcat/.OpenMRS
+    networks:
+      - prod-net
+
+volumes:
+  openmrs-db-data-prod:
+  openmrs-app-data-prod:
+
+networks:
+  prod-net:
+    driver: bridge

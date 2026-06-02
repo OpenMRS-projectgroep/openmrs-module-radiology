@@ -1,41 +1,41 @@
 version: "3.8"
 
 services:
-  db:
+  db-test:
     image: teleivo/openmrs-platform-mysql:2.0.0
-    container_name: openmrs-platform-mysql
+    container_name: openmrs-platform-mysql-test
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
-      - openmrs-db-data:/var/lib/mysql
+      - openmrs-db-data-test:/var/lib/mysql
     networks:
-      - backend-net
+      - test-net
 
-  openmrs:
+  openmrs-test:
     image: teleivo/openmrs-module-radiology:latest
-    container_name: openmrs-module-radiology
+    container_name: openmrs-module-radiology-test
     restart: unless-stopped
     depends_on:
-      - db
+      - db-test
     ports:
-      - "127.0.0.1:${PROD_PORT}:8080"
+      - "127.0.0.1:${TEST_PORT}:8080"
     environment:
-      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_HOST: db-test
       MYSQL_PORT: 3306
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
-      - openmrs-app-data:/usr/local/tomcat/.OpenMRS
+      - openmrs-app-data-test:/usr/local/tomcat/.OpenMRS
     networks:
-      - backend-net
+      - test-net
 
 volumes:
-  openmrs-db-data:
-  openmrs-app-data:
+  openmrs-db-data-test:
+  openmrs-app-data-test:
 
 networks:
-  backend-net:
+  test-net:
     driver: bridge

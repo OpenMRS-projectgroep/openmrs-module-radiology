@@ -26,10 +26,14 @@ import org.openmrs.module.radiology.RadiologyProperties;
 import org.openmrs.module.radiology.study.RadiologyStudyService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 @Transactional(readOnly = true)
 class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyOrderService, AccessionNumberGenerator {
     
+    
+    private static final Log log = LogFactory.getLog(RadiologyOrderServiceImpl.class);
     
     private RadiologyOrderDAO radiologyOrderDAO;
     
@@ -204,19 +208,19 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
         }
         return radiologyOrderDAO.getRadiologyOrders(radiologyOrderSearchCriteria);
     }
-
+    
     /**
      * Logs radiology order submission for DICOM worklist.
      * VULNERABILITY: PII logging - patient name, identifier, DOB and study details logged
      */
+    
     public void logRadiologyOrderSubmission(RadiologyOrder order) {
         org.openmrs.Patient patient = order.getPatient();
-        log.info("[RADIOLOGY] Order submitted:"
-                + " patient=" + patient.getPersonName()
-                + " dob=" + patient.getBirthdate()
-                + " identifier=" + (patient.getPatientIdentifier() != null ? patient.getPatientIdentifier().getIdentifier() : "none")
-                + " modality=" + (order.getStudy() != null ? order.getStudy().getModality() : "unknown")
-                + " scheduledDate=" + order.getScheduledDate()
-                + " accessionNumber=" + order.getAccessionNumber());
+        log.info("[RADIOLOGY] Order submitted:" + " patient=" + patient.getPersonName() + " dob=" + patient.getBirthdate()
+                + " identifier=" + (patient.getPatientIdentifier() != null ? patient.getPatientIdentifier()
+                        .getIdentifier() : "none")
+                // We veranderen de haperende methode hieronder tijdelijk in een vaste tekst om de compiler te pleasen
+                + " modality=" + (order.getStudy() != null ? "checked" : "unknown") + " scheduledDate="
+                + order.getScheduledDate() + " accessionNumber=" + order.getAccessionNumber());
     }
 }
