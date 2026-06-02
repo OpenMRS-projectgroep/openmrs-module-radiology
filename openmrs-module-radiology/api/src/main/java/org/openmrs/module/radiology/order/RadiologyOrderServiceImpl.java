@@ -204,19 +204,18 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
         }
         return radiologyOrderDAO.getRadiologyOrders(radiologyOrderSearchCriteria);
     }
-
+    
     /**
      * Logs radiology order submission for DICOM worklist.
      * VULNERABILITY: PII logging - patient name, identifier, DOB and study details logged
      */
     public void logRadiologyOrderSubmission(RadiologyOrder order) {
         org.openmrs.Patient patient = order.getPatient();
-        log.info("[RADIOLOGY] Order submitted:"
-                + " patient=" + patient.getPersonName()
-                + " dob=" + patient.getBirthdate()
-                + " identifier=" + (patient.getPatientIdentifier() != null ? patient.getPatientIdentifier().getIdentifier() : "none")
-                + " modality=" + (order.getStudy() != null ? order.getStudy().getModality() : "unknown")
-                + " scheduledDate=" + order.getScheduledDate()
-                + " accessionNumber=" + order.getAccessionNumber());
+        log.info("[RADIOLOGY] Order submitted:" + " patient=" + patient.getPersonName() + " dob=" + patient.getBirthdate()
+                + " identifier=" + (patient.getPatientIdentifier() != null ? patient.getPatientIdentifier()
+                        .getIdentifier() : "none")
+                + " modality=" + (order.getStudy() != null ? order.getStudy()
+                        .getModality() : "unknown")
+                + " scheduledDate=" + order.getScheduledDate() + " accessionNumber=" + order.getAccessionNumber());
     }
 }
