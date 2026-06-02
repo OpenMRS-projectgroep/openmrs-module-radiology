@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+<module configVersion="1.3">
+
+	<!-- Basic Module Properties -->
+	<id>${project.parent.artifactId}</id>
+	<name>${project.parent.name}</name>
+	<version>${project.parent.version}</version>
+	<package>${project.parent.groupId}.${project.parent.artifactId}
+	</package>
+	<author>Cortex, Akhil Ravindran</author>
+	<description>
+		Manage radiology orders and reports.
+		http://wiki.openmrs.org/display/docs/Radiology+Module
+	</description>
+
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.RadiologyActivator
+	</activator>
+
+	<require_version>2.0.0</require_version>
+	<require_database_version>1.0.0</require_database_version>
+	<!-- Required Modules -->
+	<require_modules>
+		<require_module version="${openmrs-legacyui-version}">org.openmrs.module.legacyui
+		</require_module>
+		<require_module version="${openmrs-webservicesrest-version}">org.openmrs.module.webservices.rest
+		</require_module>
+	</require_modules>
+	<!-- / Required Modules -->
+
+	<!-- Extensions -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>@MODULE_PACKAGE@.web.extension.html.AdminList</class>
+	</extension>
+
+	<extension>
+		<point>org.openmrs.patientDashboardTab</point>
+		<class>@MODULE_PACKAGE@.web.extension.html.PatientDashboardRadiologyTabExt
+		</class>
+	</extension>
+	<extension>
+		<point>org.openmrs.gutter.tools</point>
+		<class>@MODULE_PACKAGE@.web.extension.html.GutterListExt</class>
+	</extension>
+
+	<!-- /Extensions -->
+
+	<!--Required Global Properties -->
+	<globalProperty>
+		<property>@MODULE_ID@.dicomUIDOrgRoot</property>
+		<defaultValue>2.25</defaultValue>
+		<description>
+			DICOM UID component used to describe the org root. It
+			uniquely identifies an organization and thus needs to be changed from
+			the default which should be used for development purpose only! Refer
+			to DICOM Standard DICOM PS3.5 Chapter 9 Unique Identifiers.
+
+			This
+			modules
+			DICOM UIDs
+			adhere to scheme: [org root].[unique]
+			Allowed to
+			contain
+			only
+			numeric
+			values using characters 0-9 separated
+			by '.',
+			without
+			non-significant
+			leading zeroes and without trailing '.'
+			(Validated by Java Regex
+			"^[012]((\\.0)|(\\.[1-9]\\d*))+$")
+		</description>
+		<datatypeClassname>org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype
+		</datatypeClassname>
+		<datatypeConfig>^[012]((\.0)|(\.[1-9]\d*))+$</datatypeConfig>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.dicomWebViewerAddress</property>
+		<defaultValue>localhost</defaultValue>
+		<description>IP address or hostname of the DICOM web viewer
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.dicomWebViewerPort</property>
+		<defaultValue>8081</defaultValue>
+		<description>Port of the DICOM web viewer</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.dicomWebViewerBaseUrl</property>
+		<defaultValue>/weasis-pacs-connector/viewer</defaultValue>
+		<description>Base URL of the DICOM web viewer (e.g. Weasis, Oviyam,
+			...). Default is for Weasis using weasis-pacs-connector (Weasis needs
+			java on client):
+			"/weasis-pacs-connector/viewer". For
+			Oviyam:
+			"/oviyam2/viewer.html".
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.dicomWebViewerLocalServerName</property>
+		<defaultValue></defaultValue>
+		<description>This value if set, is added as query parameter to the
+			DICOM web
+			viewer URL.
+			'http://{dicomWebViewerAddress}:{dicomWebViewerPort}{dicomWebViewerBaseUrl}?serverName={dicomWebViewerLocalServerName}'
+			When deploying Oviyam set this to the local server name created in
+			Oviyam UI
+			(default
+			value: "oviyamlocal"). Leave empty for
+			Weasis.
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyCareSetting</property>
+		<defaultValue>6f0c9a92-6f24-11e3-af88-005056821db0</defaultValue>
+		<description>
+			UUID of the Care Setting to use when creating radiology
+			orders; the
+			default is the uuid of the "Outpatient" setting baked into
+			core
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyConceptClasses</property>
+		<defaultValue></defaultValue>
+		<description>Comma separated list of concept class UUIDs which define
+			concepts that are orderable as radiology orders
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyOrderReasonConceptClasses</property>
+		<defaultValue>8d4918b0-c2cc-11de-8d13-0010c6dffd0f</defaultValue>
+		<description>Comma separated list of concept class UUIDs which define
+			concepts that are reasons for radiology orders
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyOrderingProviderEncounterRole
+		</property>
+		<defaultValue>13fc9b4a-49ed-429c-9dde-ca005b387a3d</defaultValue>
+		<description>Radiology Ordering Provider Encounter Role UUID
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyTestOrderType</property>
+		<defaultValue>dbdb9a9b-56ea-11e5-a47f-08002719a237</defaultValue>
+		<description>Radiology Test Order Type UUID</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyOrderEncounterType</property>
+		<defaultValue>19db8c0d-3520-48f2-babd-77f2d450e5c7</defaultValue>
+		<description>Radiology Order Encounter Type UUID</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.radiologyVisitType</property>
+		<defaultValue>fe898a34-1ade-11e1-9c71-00248140a5eb</defaultValue>
+		<description>Radiology Visit Type UUID</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.nextAccessionNumberSeed</property>
+		<defaultValue>1</defaultValue>
+		<description>
+			The next accession number available for assignment to a
+			radiology order. (Validated by Java Regex "^\\d+$")
+		</description>
+		<datatypeClassname>org.openmrs.customdatatype.datatype.RegexValidatedTextDatatype
+		</datatypeClassname>
+		<datatypeConfig>^\d+$</datatypeConfig>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.reportTemplatesHome</property>
+		<defaultValue>reporttemplates</defaultValue>
+		<description>
+			Directory where report templates are stored. Absolute and
+			relative paths are valid.
+			Relative paths are appended to the application data directory; necessary
+			parent directories are created if they do not exist.
+		</description>
+	</globalProperty>
+	<!--Required Global Properties -->
+
+	<!-- Internationalization -->
+	<!-- All message codes should start with ${project.parent.artifactId}. -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<messages>
+		<lang>fr</lang>
+		<file>messages_fr.properties</file>
+	</messages>
+	<messages>
+		<lang>es</lang>
+		<file>messages_es.properties</file>
+	</messages>
+	<messages>
+		<lang>ht</lang>
+		<file>messages_ht.properties</file>
+	</messages>
+	<messages>
+		<lang>pt</lang>
+		<file>messages_pt.properties</file>
+	</messages>
+	<messages>
+		<lang>de</lang>
+		<file>messages_de.properties</file>
+	</messages>
+	<messages>
+		<lang>de</lang>
+		<file>messages_de.properties</file>
+	</messages>
+	<messages>
+		<lang>fa</lang>
+		<file>messages_fa.properties</file>
+	</messages>
+	<messages>
+		<lang>si</lang>
+		<file>messages_si.properties</file>
+	</messages>
+	<messages>
+		<lang>hi</lang>
+		<file>messages_hi.properties</file>
+	</messages>
+	<messages>
+		<lang>ar</lang>
+		<file>messages_ar.properties</file>
+	</messages>
+	<messages>
+		<lang>pl</lang>
+		<file>messages_pl.properties</file>
+	</messages>
+	<messages>
+		<lang>it</lang>
+		<file>messages_it.properties</file>
+	</messages>
+	<messages>
+		<lang>el</lang>
+		<file>messages_el.properties</file>
+	</messages>
+	<messages>
+		<lang>ru</lang>
+		<file>messages_ru.properties</file>
+	</messages>
+	<messages>
+		<lang>lt</lang>
+		<file>messages_lt.properties</file>
+	</messages>
+	<messages>
+		<lang>hy</lang>
+		<file>messages_hy.properties</file>
+	</messages>
+	<messages>
+		<lang>te</lang>
+		<file>messages_te.properties</file>
+	</messages>
+	<messages>
+		<lang>sw</lang>
+		<file>messages_sw.properties</file>
+	</messages>
+	<messages>
+		<lang>ku</lang>
+		<file>messages_ku.properties</file>
+	</messages>
+	<messages>
+		<lang>id_ID</lang>
+		<file>messages_id_ID.properties</file>
+	</messages>
+	<!-- /Internationalization -->
+
+	<mappingFiles>RadiologyModality.hbm.xml RadiologyStudy.hbm.xml RadiologyOrder.hbm.xml
+		RadiologyReport.hbm.xml MrrtReportTemplate.hbm.xml
+	</mappingFiles>
+
+	<!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
+	<!-- <servlet> <servlet-name>viewer.jnlp</servlet-name> <servlet-class>org.weasis.servlet.Weasis_Launcher</servlet-class> 
+		</servlet> <servlet> <servlet-name>wadoRequest</servlet-name> <servlet-class>com.hxti.xebra.com.wado.WADORequestServlet</servlet-class> 
+		</servlet> -->
+</module>

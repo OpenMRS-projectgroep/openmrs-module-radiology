@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+<dataset>
+	<concept_reference_source concept_source_id="1" name="RADLEX" description="RadLex Playbook is a project of the Radiological Society of North America (RSNA)" creator="1" date_created="2016-08-01 09:00:00" uuid="f689a577-eb63-4e6b-9941-13c7880f5590"/>
+	<concept_reference_term concept_reference_term_id="1" concept_source_id="1" version="2.1" creator="1" date_created="2016-08-01 09:00:00" uuid="f689a577-eb63-4e6b-9941-13c7880f5590" code="RID10321" name="RADLEX" description="RadLex Playbook is a project of the Radiological Society of North America (RSNA)"/>
+</dataset>

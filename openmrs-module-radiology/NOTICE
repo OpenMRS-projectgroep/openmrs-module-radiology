@@ -1,0 +1,58 @@
+OpenMRS module radiology
+This software was originally developed by Juan David Pastás and Victor Cortés 
+and later improved by Akhil Ravindran. It uses the OpenMRS Public License v1 and
+is in the process of migration to Mozilla Public License v2 with Health disclaimer
+
+In addition, this product includes software developed by:
+
+============================
+datatables.net
+============================
+Author  : Allan Jardine (www.sprymedia.co.uk)
+License : New BSD License
+Version : 1.10.12
+
+============================
+moment.js
+============================
+Authors : Tim Wood, Iskren Chernev, Moment.js contributors
+License : MIT
+Version : 2.13.0
+
+============================
+tinymce.com
+============================
+Authors : see https://github.com/tinymce/tinymce
+License : GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
+Version : 4.3.8
+
+============================
+jquery.com
+============================
+Authors : see https://github.com/jquery/jquery
+License : MIT
+Version : 1.8.1
+
+============================
+daterangepicker
+============================
+Authors : see https://github.com/longbill/jquery-date-range-picker
+License : MIT
+Version : 0.4.0
+
+============================
+font-awesome
+============================
+Authors : see http://fontawesome.io
+Font License
+
+    Applies to all desktop and webfont files in the following directory: font-awesome/fonts/.
+    License: SIL OFL 1.1
+    URL: http://scripts.sil.org/OFL
+
+Code License
+
+    Applies to all CSS and LESS files in the following directories: font-awesome/css/, font-awesome/less/, and font-awesome/scss/.
+    License: MIT License
+    URL: http://opensource.org/licenses/mit-license.html
+Version : 4.6.3
