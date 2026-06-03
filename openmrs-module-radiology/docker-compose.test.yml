@@ -6,12 +6,14 @@ services:
     container_name: openmrs-platform-mysql-test
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${TEST_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
     volumes:
       - openmrs-db-data-test:/var/lib/mysql
     networks:
-      - test-net
+      test-net:
+        aliases:
+          - db
 
   openmrs-test:
     image: teleivo/openmrs-module-radiology:latest
@@ -22,11 +24,11 @@ services:
     ports:
       - "127.0.0.1:${TEST_PORT}:8080"
     environment:
-      MYSQL_HOST: db-test
+      MYSQL_HOST: ${TEST_MYSQL_HOST}
       MYSQL_PORT: 3306
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${TEST_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
     volumes:
       - openmrs-app-data-test:/usr/local/tomcat/.OpenMRS
     networks:
