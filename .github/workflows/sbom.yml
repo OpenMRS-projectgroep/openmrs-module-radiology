@@ -1,0 +1,46 @@
+name: Java Build & GitHub SBOM Generation
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Belangrijk: GitHub heeft schrijfrechten nodig om de SBOM te mogen maken
+    permissions:
+      contents: write
+
+    steps:
+      # 1. Haal de code op
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Zet Java JDK 8 klaar
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Bouw de module met Maven
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      # 4. Genereer de SBOM met de officiële Microsoft/GitHub tool
+      - name: Genereer GitHub SBOM (CycloneDX)
+        uses: microsoft/sbom-tool-action@v1
+        with:
+          source-path: '.'
+          sbom-output-path: 'openmrs-module-radiology/docs/sbom.cdx.json'
+
+      # 5. Upload het bestand als een CI-artifact
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: radiology-sbom
+          path: openmrs-module-radiology/docs/sbom.cdx.json
+          retention-days: 5
