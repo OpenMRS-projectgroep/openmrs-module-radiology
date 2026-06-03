@@ -20,30 +20,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Zet Java 1.8 (8) klaar
-      - name: Set up JDK 1.8
+      # 2. Zet JDK 11 klaar (dit lost het probleem met de licentie-plugin op)
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Bouw de module met Maven (en sla de Java 11 licentie-plugin over)
+      # 3. Verzamel de dependencies via Maven (zonder tests uit te voeren)
       - name: Build with Maven
-        run: mvn clean install -DskipTests -Dlicense.skip=true
+        run: mvn clean install -DskipTests
 
       # 4. Maak de 'docs' map aan binnen de module-map
       - name: Create docs directory
         run: mkdir -p docs
 
-      # 5. Genereer de CycloneDX SBOM via de Maven plugin (ook hier de skip toevoegen voor de zekerheid)
+      # 5. Genereer de CycloneDX SBOM via de Maven plugin
+      # Dit werkt nu vlekkeloos omdat we op Java 11 draaien
       - name: Generate CycloneDX SBOM via Maven
         run: |
           mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom \
           -DschemaVersion=1.4 \
           -DoutputFormat=json \
-          -DoutputName=sbom.cdx \
-          -Dlicense.skip=true
+          -DoutputName=sbom.cdx
 
       # 6. Verplaats de gegenereerde SBOM naar de docs/ map
       - name: Move SBOM to docs directory
