@@ -9,16 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Belangrijk: GitHub heeft schrijfrechten nodig om de SBOM te mogen maken
+
+    # Belangrijk: Schrijfrechten zijn vereist zodat GitHub de afhankelijkheden mag registreren
     permissions:
       contents: write
 
     steps:
-      # 1. Haal de code op
+      # 1. Haal de code op uit de repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Zet Java JDK 8 klaar
+      # 2. Zet Java JDK 8 klaar (vereist voor deze radiology-module)
       - name: Set up JDK 8
         uses: actions/setup-java@v4
         with:
@@ -26,21 +27,20 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Bouw de module met Maven
+      # 3. Bouw de module met Maven zodat alle dependencies lokaal aanwezig zijn
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      # 4. Genereer de SBOM met de officiële Microsoft/GitHub tool
-      - name: Genereer GitHub SBOM (CycloneDX)
-        uses: microsoft/sbom-tool-action@v1
+      # 4. Genereer en exporteer de CycloneDX SBOM via de officiële GitHub Action
+      - name: Export GitHub CycloneDX SBOM
+        uses: advanced-security/component-detection-dependency-submission-action@v0.0.2
         with:
           source-path: '.'
-          sbom-output-path: 'openmrs-module-radiology/docs/sbom.cdx.json'
 
-      # 5. Upload het bestand als een CI-artifact
+      # 5. Sla de SBOM op als een downloadbaar CI-artifact bij de build output
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@v4
         with:
           name: radiology-sbom
-          path: openmrs-module-radiology/docs/sbom.cdx.json
+          path: '**/dependency-graph-snapshots/*.json'
           retention-days: 5
