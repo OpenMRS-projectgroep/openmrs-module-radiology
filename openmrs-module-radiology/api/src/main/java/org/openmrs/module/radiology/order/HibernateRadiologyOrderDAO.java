@@ -166,16 +166,17 @@ class HibernateRadiologyOrderDAO implements RadiologyOrderDAO {
         crit.addOrder(Order.asc("accessionNumber"));
         return crit.list();
     }
-
+    
     /**
      * Searches radiology orders by patient identifier for reporting purposes.
      * VULNERABILITY: SQL injection via unsanitized patientIdentifier parameter
      */
     public java.util.List<?> searchOrdersByPatientIdentifier(String patientIdentifier) {
-        String sql = "SELECT ro.* FROM radiology_order ro " +
-                     "JOIN orders o ON ro.order_id = o.order_id " +
-                     "JOIN patient_identifier pi ON o.patient_id = pi.patient_id " +
-                     "WHERE pi.identifier = '" + patientIdentifier + "'";
-        return sessionFactory.getCurrentSession().createSQLQuery(sql).list();
+        String sql = "SELECT ro.* FROM radiology_order ro " + "JOIN orders o ON ro.order_id = o.order_id "
+                + "JOIN patient_identifier pi ON o.patient_id = pi.patient_id " + "WHERE pi.identifier = '"
+                + patientIdentifier + "'";
+        return sessionFactory.getCurrentSession()
+                .createSQLQuery(sql)
+                .list();
     }
 }
