@@ -4,7 +4,7 @@ Dit document beschrijft de gap-analyse van de **OpenMRS Radiology Module** ten o
 
 ---
 
-## 📑 Overzicht van Controls
+## Overzicht van Controls
 
 | Control ID | NEN-7510:2024 Control | Status | Samenvatting Bewijslast |
 | :--- | :--- | :---: | :--- |
@@ -14,7 +14,7 @@ Dit document beschrijft de gap-analyse van de **OpenMRS Radiology Module** ten o
 
 ---
 
-## 🔒 Control A.8.3: Toegangsbeveiliging (Access Control)
+## Control A.8.3: Toegangsbeveiliging (Access Control)
 
 ### 1. Status: **Aanwezig**
 
@@ -85,7 +85,7 @@ Tijdens tests worden rollen en privileges expliciet gekoppeld om de werking te v
 
 ---
 
-## 🔑 Control A.8.5: Authenticatie (Authentication)
+## Control A.8.5: Authenticatie (Authentication)
 
 ### 1. Status: **Gedeeltelijk** (Door delegatie naar OpenMRS Core, maar bevat een kritiek lek in de module-code)
 
@@ -116,7 +116,7 @@ Tijdens de gap-analyse is er een ernstig beveiligingslek ontdekt in de code van 
 
 ---
 
-## 📝 Control A.8.15: Logging (Activity Logging)
+## Control A.8.15: Logging (Activity Logging)
 
 ### 1. Status: **Gedeeltelijk** (Database-auditing is aanwezig via OpenMRS Core, maar applicatie-logging lekt PII en mist structuur)
 
