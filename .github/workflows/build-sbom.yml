@@ -1,0 +1,30 @@
+name: Build SBOM
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1' # every Monday at 06:00 UTC
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+      - name: Generate SBOM with CycloneDX Maven plugin
+        working-directory: openmrs-module-radiology
+        run: mvn clean install -DskipTests && mvn cyclonedx:makeAggregateBom
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: |
+            openmrs-module-radiology/target/bom.json
+            openmrs-module-radiology/target/bom.xml
