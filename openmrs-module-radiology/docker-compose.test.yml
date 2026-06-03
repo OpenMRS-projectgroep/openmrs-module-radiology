@@ -30,7 +30,9 @@ services:
       MYSQL_PASSWORD: ${TEST_MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
     volumes:
-      - openmrs-app-data-test:/usr/local/tomcat/.OpenMRS
+      - openmrs-app-data:/usr/local/tomcat/.OpenMRS
+      - ./legacyui-1.2.omod:/usr/local/tomcat/.OpenMRS/modules/legacyui-1.2.omod
+      - ./webservices.rest-2.17.omod:/usr/local/tomcat/.OpenMRS/modules/webservices.rest-2.17.omod
     networks:
       - test-net
 
