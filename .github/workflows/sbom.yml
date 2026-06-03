@@ -11,13 +11,12 @@ jobs:
   build-and-sbom:
     runs-on: ubuntu-latest
 
-    # Hier stellen we in dat alle stappen standaard in de juiste submap starten
     defaults:
       run:
         working-directory: openmrs-module-radiology
 
     steps:
-      # 1. Haal de code op (dit gebeurt altijd in de root van de repo)
+      # 1. Haal de code op
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -29,23 +28,24 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Bouw de module met Maven (loopt nu direct in openmrs-module-radiology)
+      # 3. Bouw de module met Maven (en sla de Java 11 licentie-plugin over)
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install -DskipTests -Dlicense.skip=true
 
       # 4. Maak de 'docs' map aan binnen de module-map
       - name: Create docs directory
         run: mkdir -p docs
 
-      # 5. Genereer de CycloneDX SBOM via de Maven plugin
+      # 5. Genereer de CycloneDX SBOM via de Maven plugin (ook hier de skip toevoegen voor de zekerheid)
       - name: Generate CycloneDX SBOM via Maven
         run: |
           mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom \
           -DschemaVersion=1.4 \
           -DoutputFormat=json \
-          -DoutputName=sbom.cdx
+          -DoutputName=sbom.cdx \
+          -Dlicense.skip=true
 
-      # 6. Verplaats de gegenereerde SBOM naar de docs/ map (staat standaard in target/)
+      # 6. Verplaats de gegenereerde SBOM naar de docs/ map
       - name: Move SBOM to docs directory
         run: cp target/sbom.cdx.json docs/sbom.cdx.json
 
