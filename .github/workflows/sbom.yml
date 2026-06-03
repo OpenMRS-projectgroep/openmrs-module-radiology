@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Zet JDK 11 klaar (nodig voor de plugin pre-requisites)
+      # 2. Zet JDK 11 klaar
       - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
@@ -28,22 +28,24 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Bouw de module met Maven (en skip de licentiecontrole)
-      - name: Build with Maven
-        run: mvn clean install -DskipTests -Dlicense.skip=true
+      # 3. Alleen de dependencies ophalen zonder daadwerkelijk te compileren
+      - name: Resolve Maven Dependencies
+        run: mvn dependency:resolve -Dlicense.skip=true
 
       # 4. Maak de 'docs' map aan binnen de module-map
       - name: Create docs directory
         run: mkdir -p docs
 
-      # 5. Genereer de CycloneDX SBOM via de Maven plugin (ook hier skippen)
+      # 5. Genereer de CycloneDX SBOM via de Maven plugin
+      # We voegen -Dmaven.compiler.skip=true toe zodat compilerfouten worden genegeerd
       - name: Generate CycloneDX SBOM via Maven
         run: |
           mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom \
           -DschemaVersion=1.4 \
           -DoutputFormat=json \
           -DoutputName=sbom.cdx \
-          -Dlicense.skip=true
+          -Dlicense.skip=true \
+          -Dmaven.compiler.skip=true
 
       # 6. Verplaats de gegenereerde SBOM naar de docs/ map
       - name: Move SBOM to docs directory
