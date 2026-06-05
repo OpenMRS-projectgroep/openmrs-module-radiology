@@ -73,3 +73,5 @@ omod/bower_components/
 omod/node/
 omod/node_modules/
 #############
+
+.env
