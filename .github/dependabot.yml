@@ -3,9 +3,13 @@ updates:
   - package-ecosystem: "maven"
     directory: "/openmrs-module-radiology"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+      time: "09:00"
+      timezone: "Europe/Amsterdam"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+      time: "09:00"
+      timezone: "Europe/Amsterdam"
