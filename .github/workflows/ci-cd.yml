@@ -10,6 +10,16 @@ jobs:
   test-environment:
     runs-on: ubuntu-latest
 
+    # Vertelt GitHub dat we de 'production' environment gebruiken voor Secrets/Vars
+    environment: production
+
+    # Hier mappen we de GitHub Secrets/Variables naar de exacte namen die docker-compose verwacht
+    env:
+      TEST_MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_MYSQL_ROOT_PASSWORD }}
+      TEST_MYSQL_DATABASE: ${{ secrets.TEST_MYSQL_DATABASE }}
+      TEST_PORT: ${{ secrets.TEST_PORT }} 
+      TEST_MYSQL_HOST: ${{ secrets.TEST_MYSQL_HOST }}
+
     steps:
       # 1. Haal de code op uit de repository
       - name: Checkout repository
@@ -20,7 +30,7 @@ jobs:
         run: |
           docker compose -f openmrs-module-radiology/docker-compose.test.yml up -d
 
-      # 3. Geef de database en OpenMRS even de tijd om warm te draaien (net als lokaal)
+      # 3. Geef de database en OpenMRS de tijd om rustig te initialiseren
       - name: Wait for services to initialize
         run: sleep 30
 
@@ -28,11 +38,11 @@ jobs:
       - name: Check running containers
         run: docker compose -f openmrs-module-radiology/docker-compose.test.yml ps
 
-      # 5. Bekijk de logs (handig voor debugging als er een 404 of crash is)
+      # 5. Bekijk de logs (altijd handig voor debugging mocht er toch iets misgaan)
       - name: Inspect OpenMRS logs
-        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml logs openmrs --tail=50
+        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml logs openmrs-test --tail=50
 
-      # 6. Brek de boel netjes af en ruim de volumes op
+      # 6. Breken de boel netjes af en ruim de volumes op, ook als een eerdere stap faalt
       - name: Shutdown Docker Compose
         if: always()
         run: docker compose -f openmrs-module-radiology/docker-compose.test.yml down -v
