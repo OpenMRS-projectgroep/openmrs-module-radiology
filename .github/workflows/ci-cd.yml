@@ -9,11 +9,13 @@ on:
 jobs:
   test-environment:
     runs-on: ubuntu-latest
-
-    # Vertelt GitHub dat we de 'production' environment gebruiken voor Secrets/Vars
     environment: production
 
-    # Hier mappen we de GitHub Secrets/Variables naar de exacte namen die docker-compose verwacht
+    # Stelt de juiste werkmap in voor alle commando's
+    defaults:
+      run:
+        working-directory: openmrs-module-radiology
+
     env:
       TEST_MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_MYSQL_ROOT_PASSWORD }}
       TEST_MYSQL_DATABASE: ${{ secrets.TEST_MYSQL_DATABASE }}
@@ -25,24 +27,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Start de testomgeving op met jouw docker-compose.test.yml
+      # 2. Start de testomgeving op binnen de working-directory
       - name: Start Docker Compose (Test)
         run: |
-          docker compose -f openmrs-module-radiology/docker-compose.test.yml up -d
+          docker compose -f docker-compose.test.yml up -d
 
-      # 3. Geef de database en OpenMRS de tijd om rustig te initialiseren
+      # 3. Geef de database en OpenMRS de tijd om op te starten
       - name: Wait for services to initialize
         run: sleep 30
 
-      # 4. Controleer of de containers daadwerkelijk live staan en niet gecrasht zijn
+      # 4. Controleer of de containers live staan
       - name: Check running containers
-        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml ps
+        run: docker compose -f docker-compose.test.yml ps
 
-      # 5. Bekijk de logs (altijd handig voor debugging mocht er toch iets misgaan)
+      # 5. Bekijk de logs voor eventuele fouten
       - name: Inspect OpenMRS logs
-        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml logs openmrs-test --tail=50
+        run: docker compose -f docker-compose.test.yml logs openmrs-test --tail=50
 
-      # 6. Breken de boel netjes af en ruim de volumes op, ook als een eerdere stap faalt
+      # 6. Ruim alles netjes op (draait altijd, ook bij een crash)
       - name: Shutdown Docker Compose
         if: always()
-        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml down -v
+        run: docker compose -f docker-compose.test.yml down -v
