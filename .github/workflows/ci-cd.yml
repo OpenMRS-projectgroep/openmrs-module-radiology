@@ -1,0 +1,38 @@
+name: OpenMRS Radiology CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-environment:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Haal de code op uit de repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Start de testomgeving op met jouw docker-compose.test.yml
+      - name: Start Docker Compose (Test)
+        run: |
+          docker compose -f openmrs-module-radiology/docker-compose.test.yml up -d
+
+      # 3. Geef de database en OpenMRS even de tijd om warm te draaien (net als lokaal)
+      - name: Wait for services to initialize
+        run: sleep 30
+
+      # 4. Controleer of de containers daadwerkelijk live staan en niet gecrasht zijn
+      - name: Check running containers
+        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml ps
+
+      # 5. Bekijk de logs (handig voor debugging als er een 404 of crash is)
+      - name: Inspect OpenMRS logs
+        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml logs openmrs --tail=50
+
+      # 6. Brek de boel netjes af en ruim de volumes op
+      - name: Shutdown Docker Compose
+        if: always()
+        run: docker compose -f openmrs-module-radiology/docker-compose.test.yml down -v
