@@ -53,7 +53,7 @@ jobs:
 
       # 7. Upload het bestand docs/sbom.cdx.json als een CI-artifact
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: radiology-module-sbom
           path: openmrs-module-radiology/docs/sbom.cdx.json
