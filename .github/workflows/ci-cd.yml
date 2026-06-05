@@ -22,6 +22,11 @@ jobs:
       TEST_PORT: ${{ secrets.TEST_PORT }}
       TEST_MYSQL_HOST: ${{ secrets.TEST_MYSQL_HOST }}
 
+      PACS_HOST: ${{ secrets.PACS_HOST }}
+      PACS_ADMIN_USER: ${{ secrets.PACS_ADMIN_USER }}
+      PACS_ADMIN_PASSWORD: ${{ secrets.PACS_ADMIN_PASSWORD }}
+      PACS_WADO_URL: ${{ secrets.PACS_WADO_URL }}
+
     steps:
       # 1. Haal de code op uit de repository
       - name: Checkout repository

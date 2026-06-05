@@ -29,6 +29,11 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: ${TEST_MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
+
+      PACS_HOST: ${PACS_HOST}
+      PACS_ADMIN_USER: ${PACS_ADMIN_USER}
+      PACS_ADMIN_PASSWORD: ${PACS_ADMIN_PASSWORD}
+      PACS_WADO_URL: ${PACS_WADO_URL}
     volumes:
       - openmrs-app-data-test:/usr/local/tomcat/.OpenMRS
       - ./legacyui-1.2.omod:/usr/local/tomcat/.OpenMRS/modules/legacyui-1.2.omod
