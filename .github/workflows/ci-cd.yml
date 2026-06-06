@@ -1,0 +1,54 @@
+name: OpenMRS Radiology CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-environment:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'production' || 'development' }}
+
+    defaults:
+      run:
+        working-directory: openmrs-module-radiology
+
+    env:
+      TEST_MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_MYSQL_ROOT_PASSWORD }}
+      TEST_MYSQL_DATABASE: ${{ secrets.TEST_MYSQL_DATABASE }}
+      TEST_PORT: ${{ secrets.TEST_PORT }}
+      TEST_MYSQL_HOST: ${{ secrets.TEST_MYSQL_HOST }}
+
+      PACS_HOST: ${{ secrets.PACS_HOST }}
+      PACS_ADMIN_USER: ${{ secrets.PACS_ADMIN_USER }}
+      PACS_ADMIN_PASSWORD: ${{ secrets.PACS_ADMIN_PASSWORD }}
+      PACS_WADO_URL: ${{ secrets.PACS_WADO_URL }}
+
+    steps:
+      # 1. Haal de code op uit de repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Start de testomgeving op binnen de working-directory
+      - name: Start Docker Compose (Test)
+        run: |
+          docker compose -f docker-compose.test.yml up -d
+
+      # 3. Geef de database en OpenMRS de tijd om op te starten
+      - name: Wait for services to initialize
+        run: sleep 30
+
+      # 4. Controleer of de containers live staan
+      - name: Check running containers
+        run: docker compose -f docker-compose.test.yml ps
+
+      # 5. Bekijk de logs voor eventuele fouten
+      - name: Inspect OpenMRS logs
+        run: docker compose -f docker-compose.test.yml logs openmrs-test --tail=50
+
+      # 6. Ruim alles netjes op (draait altijd, ook bij een crash)
+      - name: Shutdown Docker Compose
+        if: always()
+        run: docker compose -f docker-compose.test.yml down -v
