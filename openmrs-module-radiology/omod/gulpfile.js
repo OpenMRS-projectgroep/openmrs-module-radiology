@@ -10,7 +10,7 @@ var vendorPath = 'target/classes/web/module/resources/vendor';
 
 // Copy javascript files to vendor folder and uglify them
 gulp.task('lib-js-files', function() {
-    gulp.src(mainBowerFiles('**/*.js'), {
+    return gulp.src(mainBowerFiles('**/*.js'), {
             base: 'bower_components'
         })
         .pipe(uglify())
@@ -20,19 +20,22 @@ gulp.task('lib-js-files', function() {
 
 // Copy css files to vendor folder and minify them
 gulp.task('lib-css-files', function() {
-    gulp.src(mainBowerFiles('**/*.css'), {
+    return gulp.src(mainBowerFiles('**/*.css'), {
             base: 'bower_components'
         })
         .pipe(cleanCSS())
         .pipe(rename({extname: '.min.css'}))
         .pipe(gulp.dest(vendorPath));
-    gulp.src('bower_components/tinymce/skins/lightgray/*.min.css')
+});
+
+gulp.task('lib-tinymce-css-files', function() {
+    return gulp.src('bower_components/tinymce/skins/lightgray/*.min.css')
         .pipe(gulp.dest(vendorPath+'/tinymce/skins/lightgray'));
 });
 
 // Copy javascript files to vendor folder, uglify them and create sourcemaps
 gulp.task('lib-js-files-with-sourcemaps', function() {
-    gulp.src(mainBowerFiles('**/*.js'), {
+    return gulp.src(mainBowerFiles('**/*.js'), {
             base: 'bower_components'
         })
         .pipe(sourcemaps.init())
@@ -44,7 +47,7 @@ gulp.task('lib-js-files-with-sourcemaps', function() {
 
 // Copy css files to vendor folder, minify them and create sourcemaps
 gulp.task('lib-css-files-with-sourcemaps', function() {
-    gulp.src(mainBowerFiles('**/*.css'), {
+    return gulp.src(mainBowerFiles('**/*.css'), {
             base: 'bower_components'
         })
         .pipe(sourcemaps.init())
@@ -52,13 +55,11 @@ gulp.task('lib-css-files-with-sourcemaps', function() {
         .pipe(rename({extname: '.min.css'}))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(vendorPath));
-    gulp.src('bower_components/tinymce/skins/lightgray/*.min.css')
-        .pipe(gulp.dest(vendorPath+'/tinymce/skins/lightgray'));
 });
 
 // Copy gif files to vendor folder
 gulp.task('lib-gif-files', function() {
-    gulp.src(mainBowerFiles('**/*.gif'), {
+    return gulp.src(mainBowerFiles('**/*.gif'), {
             base: 'bower_components'
         })
         .pipe(gulp.dest(vendorPath));
@@ -66,18 +67,18 @@ gulp.task('lib-gif-files', function() {
 
 // Copy fonts to vendor folder
 gulp.task('lib-font-files', function() {
-    gulp.src(mainBowerFiles('**/*.{otf,eot,svg,ttf,woff,woff2}'), {
+    return gulp.src(mainBowerFiles('**/*.{otf,eot,svg,ttf,woff,woff2}'), {
             base: 'bower_components'
         })
         .pipe(gulp.dest(vendorPath));
 });
 
 // Default Task
-gulp.task('default', function() {
-    runSequence('lib-js-files', 'lib-css-files', 'lib-font-files', 'lib-gif-files');
+gulp.task('default', function(callback) {
+    runSequence('lib-js-files', 'lib-css-files', 'lib-tinymce-css-files', 'lib-font-files', 'lib-gif-files', callback);
 });
 
 // Development Task
-gulp.task('dev', function() {
-    runSequence('lib-js-files-with-sourcemaps', 'lib-css-files-with-sourcemaps', 'lib-font-files', 'lib-gif-files');
+gulp.task('dev', function(callback) {
+    runSequence('lib-js-files-with-sourcemaps', 'lib-css-files-with-sourcemaps', 'lib-tinymce-css-files', 'lib-font-files', 'lib-gif-files', callback);
 });

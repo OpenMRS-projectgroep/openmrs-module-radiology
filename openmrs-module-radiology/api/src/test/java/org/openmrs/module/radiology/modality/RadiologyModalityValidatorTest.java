@@ -23,7 +23,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Tests {@link RadiologyModalityValidator}.
