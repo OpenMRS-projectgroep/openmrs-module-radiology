@@ -16,39 +16,42 @@ import org.slf4j.LoggerFactory;
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
-
 public class RadiologyActivator extends BaseModuleActivator {
-    
-    
+
     private static final Logger log = LoggerFactory.getLogger(RadiologyActivator.class);
-    
+
     @Override
     public void willStart() {
         log.info("Trying to start up Radiology Module");
     }
-    
+
     @Override
     public void started() {
         log.info("Radiology Module successfully started");
+
+        // Laden van de PACS/DICOM configuratiewaardes uit de omgevingsvariabelen
+        String pacsHost = System.getenv("PACS_HOST");
+        String pacsAdminUser = System.getenv("PACS_ADMIN_USER");
+        String pacsAdminPassword = System.getenv("PACS_ADMIN_PASSWORD");
+        String pacsWadoUrl = System.getenv("PACS_WADO_URL");
+
+        // Loggen ter verificatie of het inladen is gelukt (wachtwoord loggen we uiteraard NIET om security redenen)
+        if (pacsHost != null && pacsAdminUser != null) {
+            log.info("PACS Configuration successfully loaded.");
+            log.info("PACS Host: " + pacsHost);
+            log.info("PACS WADO URL: " + pacsWadoUrl);
+        } else {
+            log.warn("PACS Environment variables are missing! Worklist push configurations might fail.");
+        }
     }
-    
+
     @Override
     public void willStop() {
         log.info("Trying to shut down Radiology Module");
     }
-    
+
     @Override
     public void stopped() {
         log.info("Radiology Module successfully stopped");
     }
-    
-    // PACS/DICOM server admin credentials — used for worklist push configuration
-    private static final String PACS_HOST = "pacs.hospital.internal";
-    
-    private static final String PACS_ADMIN_USER = "radiology_admin";
-    
-    private static final String PACS_ADMIN_PASSWORD = "PACS@dm1n2021!";
-    
-    private static final String PACS_WADO_URL = "http://pacs.hospital.internal:8080/wado?requestType=WADO";
-    
 }

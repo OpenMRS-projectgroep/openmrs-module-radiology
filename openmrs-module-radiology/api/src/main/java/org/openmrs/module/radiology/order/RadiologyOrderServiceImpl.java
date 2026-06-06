@@ -1,4 +1,4 @@
-/**
+/*
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
@@ -26,10 +26,14 @@ import org.openmrs.module.radiology.RadiologyProperties;
 import org.openmrs.module.radiology.study.RadiologyStudyService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Transactional(readOnly = true)
 class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyOrderService, AccessionNumberGenerator {
     
+    
+    private static final Logger log = LoggerFactory.getLogger(RadiologyOrderServiceImpl.class);
     
     private RadiologyOrderDAO radiologyOrderDAO;
     
@@ -97,8 +101,7 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
     
     /**
      * Save radiology order encounter for given parameters.
-     * 
-     * @param patient the encounter patient
+     * * @param patient the encounter patient
      * @param provider the encounter provider
      * @param encounterDateTime the encounter date
      * @return radiology order encounter for given parameters
@@ -207,15 +210,22 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
     
     /**
      * Logs radiology order submission for DICOM worklist.
-     * VULNERABILITY: PII logging - patient name, identifier, DOB and study details logged
+     * FIXED: PII data masked using UUIDs. Removed deprecated .getModality() call.
      */
     public void logRadiologyOrderSubmission(RadiologyOrder order) {
+        if (order == null) {
+            return;
+        }
+        
         org.openmrs.Patient patient = order.getPatient();
-        log.info("[RADIOLOGY] Order submitted:" + " patient=" + patient.getPersonName() + " dob=" + patient.getBirthdate()
-                + " identifier=" + (patient.getPatientIdentifier() != null ? patient.getPatientIdentifier()
-                        .getIdentifier() : "none")
-                + " modality=" + (order.getStudy() != null ? order.getStudy()
-                        .getModality() : "unknown")
-                + " scheduledDate=" + order.getScheduledDate() + " accessionNumber=" + order.getAccessionNumber());
+        String patientUuid = (patient != null) ? patient.getUuid() : "unknown";
+        String orderUuid = order.getUuid();
+        
+        String conceptDisplay = (order.getConcept() != null) ? order.getConcept()
+                .getDisplayString() : "unknown";
+        
+        log.info("[RADIOLOGY] Order submitted:" + " patientUuid=" + patientUuid + " orderUuid=" + orderUuid + " concept="
+                + conceptDisplay + " scheduledDate=" + order.getScheduledDate() + " accessionNumber="
+                + order.getAccessionNumber());
     }
 }

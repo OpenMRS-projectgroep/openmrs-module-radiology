@@ -50,7 +50,7 @@
 		<javaCompilerVersion>1.8</javaCompilerVersion>
 		<openMRSVersion>2.0.0</openMRSVersion>
 		<openmrs-legacyui-version>1.2</openmrs-legacyui-version>
-		<openmrs-webservicesrest-version>2.49.0</openmrs-webservicesrest-version>
+		<openmrs-webservicesrest-version>2.24.0</openmrs-webservicesrest-version>
 		<maven-formatter-plugin-version>1.6.0</maven-formatter-plugin-version>
 		<maven-formatter-plugin-style-java>${project.parent.basedir}/tools/formatter/java.xml</maven-formatter-plugin-style-java>
 		<maven-formatter-plugin-style-javascript>${project.parent.basedir}/tools/formatter/javascript.xml</maven-formatter-plugin-style-javascript>
@@ -121,7 +121,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.1.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -135,7 +135,7 @@
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
-					<version>5.0.0</version>
+					<version>4.1</version>
 					<configuration>
 						<header>license-header.txt</header>
 						<includes>
@@ -216,7 +216,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.7.7.201606060606</version>
+					<version>0.8.14</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>
@@ -234,7 +234,7 @@
 				<plugin>
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>${docker.maven.plugin.fabric8.version}</version>
+					<version>0.38.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

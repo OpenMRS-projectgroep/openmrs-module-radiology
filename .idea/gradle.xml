@@ -5,6 +5,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/openmrs-module-radiology/acceptanceTest" />
+        <option name="gradleJvm" value="1.8" />
       </GradleProjectSettings>
     </option>
   </component>

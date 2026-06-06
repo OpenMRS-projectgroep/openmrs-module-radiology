@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="210708d0-51ce-45e3-8bc0-0971451c0c11" name="Changes" comment="">
-<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/.github/workflows/sbom.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/sbom.yml" afterDir="false" />
-=======
-      <change beforePath="$PROJECT_DIR$/.github/workflows/ci-cd.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/ci-cd.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
->>>>>>> Stashed changes
     </list>
     <list default="true" id="210708d0-51ce-45e3-8bc0-0971451c0c11" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,13 +60,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-<<<<<<< Updated upstream
     "git-widget-placeholder": "SBOM-genereren",
-=======
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
->>>>>>> Stashed changes
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Tingp/GitHub/openmrs-module-radiology",
     "node.js.detected.package.eslint": "true",
@@ -79,16 +68,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-<<<<<<< Updated upstream
     "settings.editor.selected.configurable": "preferences.pluginManager"
-=======
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
->>>>>>> Stashed changes
   }
 }]]></component>
   <component name="RecentsManager">
@@ -96,7 +76,6 @@
       <recent name="C:\Users\Tingp\GitHub\openmrs-module-radiology\.github\workflows" />
     </key>
   </component>
-<<<<<<< Updated upstream
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -112,16 +91,6 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
-=======
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.24374.151" />
-        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.24374.151" />
-      </set>
-    </attachedChunks>
-  </component>
->>>>>>> Stashed changes
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="210708d0-51ce-45e3-8bc0-0971451c0c11" name="Changes" comment="" />
