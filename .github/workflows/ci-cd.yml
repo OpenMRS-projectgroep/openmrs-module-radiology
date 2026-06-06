@@ -9,9 +9,8 @@ on:
 jobs:
   test-environment:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event_name == 'push' && 'production' || 'development' }}
 
-    # Stelt de juiste werkmap in voor alle commando's
     defaults:
       run:
         working-directory: openmrs-module-radiology
