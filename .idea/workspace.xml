@@ -5,13 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="210708d0-51ce-45e3-8bc0-0971451c0c11" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/.github/workflows/sbom.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/sbom.yml" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openmrs-module-radiology/api/src/test/java/org/openmrs/module/radiology/study/RadiologyStudyServiceComponentTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/openmrs-module-radiology/api/src/test/java/org/openmrs/module/radiology/study/RadiologyStudyServiceComponentTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openmrs-module-radiology/api/src/test/resources/TestingApplicationContext.xml" beforeDir="false" afterPath="$PROJECT_DIR$/openmrs-module-radiology/api/src/test/resources/TestingApplicationContext.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openmrs-module-radiology/omod/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/openmrs-module-radiology/omod/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openmrs-module-radiology/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/openmrs-module-radiology/pom.xml" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <list default="true" id="210708d0-51ce-45e3-8bc0-0971451c0c11" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="1454" />
   </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
@@ -60,7 +71,11 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+<<<<<<< Updated upstream
     "git-widget-placeholder": "SBOM-genereren",
+=======
+    "git-widget-placeholder": "OpenMRS-Module-Upload-Vulnerable-to-Path-Traversal-(Zip-Slip)",
+>>>>>>> Stashed changes
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Tingp/GitHub/openmrs-module-radiology",
     "node.js.detected.package.eslint": "true",

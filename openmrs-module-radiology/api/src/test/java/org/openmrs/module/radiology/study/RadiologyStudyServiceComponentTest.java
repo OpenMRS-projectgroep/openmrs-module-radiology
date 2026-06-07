@@ -60,11 +60,14 @@ public class RadiologyStudyServiceComponentTest extends BaseModuleContextSensiti
     public ExpectedException expectedException = ExpectedException.none();
     
     /**
-     * Overriding following method is necessary to enable MVCC which is disabled by default in DB h2
+     * Overriding following method is necessary to enable MVCC which is disabled by
+     * default in DB h2
      * used for the component tests. This prevents following exception:
      * org.hibernate.exception.GenericJDBCException: could not load an entity:
-     * [org.openmrs.GlobalProperty#order.nextOrderNumberSeed] due to "Timeout trying to lock table "
-     * GLOBAL_PROPERTY"; SQL statement:" which occurs in all tests touching methods that call
+     * [org.openmrs.GlobalProperty#order.nextOrderNumberSeed] due to "Timeout trying
+     * to lock table "
+     * GLOBAL_PROPERTY"; SQL statement:" which occurs in all tests touching methods
+     * that call
      * orderService.saveOrder()
      */
     @Override
@@ -102,7 +105,8 @@ public class RadiologyStudyServiceComponentTest extends BaseModuleContextSensiti
     }
     
     /**
-     * Convenience method to get a RadiologyStudy object with all required values filled (except
+     * Convenience method to get a RadiologyStudy object with all required values
+     * filled (except
      * radiologyOrder) in but which is not yet saved in the database
      * 
      * @return RadiologyStudy object that can be saved to the database
