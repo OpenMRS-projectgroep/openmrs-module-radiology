@@ -26,9 +26,19 @@ jobs:
           cache: maven
 
       - name: Run JUnit tests
-        run: mvn test -B
+        run: mvn clean test -B
         env:
           CI: true
+
+      - name: Upload JaCoCo Code Coverage Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-code-coverage
+          path: |
+            openmrs-module-radiology/api/target/site/jacoco/
+            openmrs-module-radiology/omod/target/site/jacoco/
+          if-no-files-found: error
 
   test-environment:
     runs-on: ubuntu-latest
