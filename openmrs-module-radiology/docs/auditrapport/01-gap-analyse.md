@@ -218,3 +218,75 @@ Om volledig te voldoen aan de NEN-7510 8.15 normering (en de AVG/GDPR), moet het
 | **Bescherming van patiëntprivacy (PII)** | De inactieve methode `logRadiologyOrderSubmission` logt direct herleidbare patiëntgegevens (volledige naam en geboortedatum) in platte tekst. | Applicatielogs bevatten **geen direct herleidbare PII** (conform AVG). Koppeling vindt uitsluitend plaats via UUID's en accession numbers. | Vervang de parameters `patient.getPersonName()` en `patient.getBirthdate()` in de logmethode door `patient.getUuid()`. |
 | **Logging van administratieve CRUD-acties** | Wijzigingen aan modaliteiten (bijv. MRI, CT) en rapporttemplates (MRRT) worden niet weggeschreven naar de applicatielogs. | Wijzigingen in de systeemconfiguratie of metadata-tabellen genereren een duidelijke `INFO` logregel in de applicatielogs met metadata. | Voeg `log.info` toe aan de bewerkings- en verwijderingsmethoden in de service-laag van modaliteiten en templates. |
 | **Gestructureerd Logformaat** | Bestaande logregels zijn ongestructureerde tekstregels, wat automatische verwerking en monitoring bemoeilijkt. | Alle audit-events in de applicatielogs gebruiken een gestructureerd formaat (zoals JSON of key-value pairs) voor eenvoudige SIEM-parsing. | Implementeer een gestructureerde log-helper of format-sjabloon in de module (bijv. `event=... user=... target=...`). |
+
+---
+
+### 5. Gedetailleerde Gap-Definities (Klinisch & Beveiliging)
+
+De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zijn expliciet geïdentificeerd als een **Gap** ten opzichte van de NEN-7510 8.15 / A.12.4 normering:
+
+* **Gap 1: Ontbreken van Inzage-auditing (Read Auditing) op Dossiers**
+  * *Omschrijving:* Er vindt geen logging plaats wanneer een medewerker of arts de radiologie-tab van een patiëntdossier openraadt.
+  * *Normimpact:* Zeer kritiek. Ongeautoriseerde raadpleging van dossiers kan achteraf niet worden geaudit.
+
+* **Gap 2: Ontbreken van Inzage-auditing op Orders en Rapporten**
+  * *Omschrijving:* Geen logging bij het inzien, lezen of downloaden van individuele orders en radiology-rapporten.
+  * *Normimpact:* Kritiek. Inzage in gevoelige medische resultaten is niet herleidbaar (*wie* bekeek *wat* en *wanneer*).
+
+* **Gap 3: Inactieve logging van Order-aanmaak & PII-lek**
+  * *Omschrijving:* Het indienen van een radiology order genereert op dit moment geen actieve applicatielogregel omdat de service-laag de methode `logRadiologyOrderSubmission` niet aanroept. Bovendien lekt deze methode direct herleidbare PII (volledige patiëntennaam en geboortedatum) in platte tekst, en veroorzaakt het compileerfouten.
+  * *Normimpact:* Hoog. Geen actieve audit trail voor mutaties in SIEM, en schending van de AVG/GDPR-privacyrichtlijnen.
+
+* **Gap 4: Ontbreken van realtime logging bij het annuleren of stopzetten van orders**
+  * *Omschrijving:* Acties om een order stop te zetten (`discontinueRadiologyOrder`) worden niet weggeschreven naar de applicatielogs.
+  * *Normimpact:* Medium. Kritieke workflow-wijzigingen zijn niet realtime zichtbaar voor beveiligingsmonitoring.
+
+* **Gap 5: Ontbreken van realtime logging bij het aanmaken en voltooien van rapporten**
+  * *Omschrijving:* Het opstellen van concept-rapporten en het definitief maken/ondertekenen van rapporten wordt niet gelogd in de logbestanden.
+  * *Normimpact:* Medium. Geen operationeel toezicht op de levenscyclus van medische rapportages.
+
+* **Gap 6: Ontbreken van realtime logging bij het intrekken (voiden) van rapporten**
+  * *Omschrijving:* Het intrekken van rapporten (vanwege fouten) wordt alleen in de database vastgelegd, maar genereert geen applicatielogs.
+  * *Normimpact:* Medium. Verhoogd risico op ongemerkte aanpassingen in medische verslaglegging.
+
+* **Gap 7: Geen logging van beheer en configuratie (Modaliteiten & Templates)**
+  * *Omschrijving:* Het wijzigen van de systeemconfiguratie (bijv. aanmaken van modalities of uploaden van MRRT rapporttemplates) genereert geen applicatielogs.
+  * *Normimpact:* Laag/Medium. Wijzigingen in het gedrag of de structuur van de module zijn administratief niet direct traceerbaar.
+
+---
+
+### 6. Prioriteitenlijst voor Implementatie
+
+Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellijk en in fasen worden geïmplementeerd volgens onderstaande prioriteitenlijst:
+
+#### Prioriteit 1: Corrigeren en Activeren Order-aanmaak Logging (Onmiddellijk)
+* **Doel:** Activeren van ordercreatie-auditing zonder privacy-risico's.
+* **Actie:**
+  1. Pas `logRadiologyOrderSubmission` in `RadiologyOrderServiceImpl.java` aan: vervang namen en geboortedata door `patient.getUuid()` en `order.getUuid()`.
+  2. Los de compileerfouten op door de SLF4J logger correct te declareren en de vervallen `.getModality()`-aanroep te verwijderen.
+  3. Roep `logRadiologyOrderSubmission(result)` aan direct na het opslaan in `placeRadiologyOrder(...)`.
+
+#### Prioriteit 2: Implementeren van Read-auditing (Kritiek)
+* **Doel:** Voldoen aan de wettelijke verplichting om inzage in medische dossiers herleidbaar te maken.
+* **Actie:**
+  1. Voeg logging toe in `RadiologyDashboardOrdersTabController` en `RadiologyDashboardReportsTabController` bij het laden van patiëntgegevens.
+  2. Voeg logging toe in `RadiologyReportFormController` (GET-request) bij het inzien van een specifiek rapport.
+  3. Logformaat: `event=patient_record_accessed user_uuid=... patient_uuid=... type=dashboard/report`
+
+#### Prioriteit 3: Logging van Kritieke Mutaties en Annuleringen (Hoog)
+* **Doel:** Zichtbaarheid van ingetrokken of geannuleerde klinische gegevens.
+* **Actie:**
+  1. Voeg logging toe aan `discontinueRadiologyOrder(...)` in `RadiologyOrderServiceImpl.java`. Log de actor, de order en de reden (`nonCodedDiscontinueReason`).
+  2. Voeg logging toe aan `voidRadiologyReport(...)` in `RadiologyReportServiceImpl.java`. Log de actor, het rapport en de reden (`voidReason`).
+
+#### Prioriteit 4: Logging van Rapport-levenscyclus (Medium)
+* **Doel:** Het volgen van het opstellen en definitief maken van medische rapporten.
+* **Actie:**
+  1. Log het opslaan van concepten in `saveRadiologyReportDraft(...)` en het definitief maken in `saveRadiologyReport(...)`.
+
+#### Prioriteit 5: Beheer en Gestructureerd Logformaat (Laag/Medium)
+* **Doel:** Auditing van administratieve rollen en vereenvoudiging van automatische SIEM-analyse.
+* **Actie:**
+  1. Log toevoegen aan modaliteit- en template CRUD-acties in de respectievelijke service-implementaties.
+  2. Formatteer alle applicatielogs volgens een eenduidige key-value of JSON structuur.
+
