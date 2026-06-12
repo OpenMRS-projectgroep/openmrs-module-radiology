@@ -9,9 +9,14 @@
  */
 package org.openmrs.module.radiology.dicom;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.module.radiology.util.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Validates DICOM UIDs according to DICOM PS3.5 Chapter 9 Unique Identifiers (UIDs).
@@ -31,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class DicomUidValidator {
     
+    
+    private static final Logger log = LoggerFactory.getLogger(DicomUidValidator.class);
     
     private static final int MAX_LENGTH = 64;
     
@@ -52,7 +59,13 @@ public class DicomUidValidator {
      */
     public static boolean isValid(String uid) {
         
-        return isLengthValid(uid) && isPatternValid(uid);
+        boolean valid = isLengthValid(uid) && isPatternValid(uid);
+        if (!valid) {
+            Map<String, String> logData = new LinkedHashMap<>();
+            logData.put("uid", uid != null ? uid : "null");
+            log.warn(LogUtils.formatAsJson("invalid_dicom_uid_attempt", logData));
+        }
+        return valid;
     }
     
     /**
