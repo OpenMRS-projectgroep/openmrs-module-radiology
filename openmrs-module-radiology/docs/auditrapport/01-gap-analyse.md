@@ -158,6 +158,26 @@ OpenMRS dwingt op database-niveau een strikte audit-trail af voor alle klinische
 #### B. Applicatie-logging (Logbestanden)
 De module maakt gebruik van de SLF4J-logging-faciliteit. In de service-implementaties (`*ServiceImpl.java`) wordt echter vrijwel **geen** gebruik gemaakt van applicatie-logging om klinische handelingen (zoals het voltooien van een rapport of het aanmaken van een studie) naar de server-logbestanden te schrijven.
 
+#### C. Formele NEN-7510 Logging Matrix
+De onderstaande matrix toetst de belangrijkste logging-events binnen de Radiology-module kritisch aan de eisen van **NEN-7510-2:2024 control A.8.15 / A.12.4**. Hierbij is specifiek getoetst of de noodzakelijke metadata (**wie** heeft de actie uitgevoerd, **wat** is er gebeurd, **wanneer** vond het plaats en indien van toepassing **waarom**) aanwezig is in de logs.
+
+| Event | Gelogd? | Gevoelige data | Compliant met NEN-7510 8.15? |
+| :--- | :--- | :---: | :--- |
+| **Gebruiker authenticatie (Inloggen / Uitloggen)** | **Ja** (via OpenMRS Core database/applicatielogs). | Nee | **Ja**. OpenMRS Core registreert inlogpogingen en mislukte logins met volledige metadata: *wie* (gebruikersnaam/IP), *wat* (succes/mislukt), *wanneer* (timestamp) en *waarom* (foutreden bij mislukking). |
+| **Raadplegen patiëntendossier / inzien radiology dashboard** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. NEN-7510 vereist dat inzage in patiëntgegevens herleidbaar is (read auditing). Het ontbreken van logging voor dit event betekent dat er geen metadata (*wie*, *wat*, *wanneer*) over dossierinzage beschikbaar is. |
+| **Radiology Order aanmaken (placing order)** | **Gedeeltelijk**. Alleen via database-auditing. Applicatielogs loggen dit niet omdat `logRadiologyOrderSubmission` inactief is. | Nee | **Nee**. Database-auditing legt wel *wie* (`creator`), *wat* (order) en *wanneer* (`date_created`) vast. Echter is applicatielogging voor realtime SIEM-monitoring inactief en ontbreekt de reden (*waarom*) voor creatie in de audit-trail. Activering van de huidige applicatielogmethode zou bovendien tot een PII-lek leiden. |
+| **Radiology Order inzien** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. Geen logging op lees-events van individuele orders. *Wie* de order heeft ingezien en *wanneer* is niet herleidbaar. |
+| **Radiology Order stopzetten / wijzigen (discontinue)** | **Gedeeltelijk**. Database legt mutatie en reden vast via OpenMRS Core. Geen applicatielogging. | Nee | **Gedeeltelijk**. De database bevat volledige metadata: *wie* (`changed_by`), *wat* (stopzetting), *wanneer* (`date_changed`) en *waarom* (`nonCodedDiscontinueReason`). Het ontbreken van realtime applicatielogging voor externe security monitoring (SIEM) vormt echter een gap. |
+| **Radiology Rapport aanmaken / opslaan (concept/draft)** | **Gedeeltelijk**. Alleen database-auditing. Geen applicatielogging. | Nee | **Gedeeltelijk**. Database-auditing legt *wie* (`creator`), *wat* (rapport) en *wanneer* (`date_created`) vast. De reden (*waarom*) is bij normale invoer van concepten niet van toepassing. Echter is er geen realtime applicatie-audit trail. |
+| **Radiology Rapport inzien** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. Geen read-auditing op rapporten. *Wie* het rapport heeft ingezien en *wanneer* is niet herleidbaar. |
+| **Radiology Rapport definitief voltooien** | **Gedeeltelijk**. Alleen database-auditing. Geen applicatielogging. | Nee | **Gedeeltelijk**. Database-auditing legt *wie* (`changed_by`), *wat* (statuswijziging naar `COMPLETED`) en *wanneer* (`date_changed`) vast. Geen applicatielogging. |
+| **Radiology Rapport intrekken / verwijderen (voiden)** | **Ja** (via database). Database legt alle metadata vast. Geen applicatielogging. | Nee | **Ja** (voor database-auditing). Metadata is volledig aanwezig: *wie* (`voided_by`), *wat* (voiding van rapport), *wanneer* (`date_voided`) en de verplichte reden *waarom* (`void_reason`). Alleen het gebrek aan een realtime melding in de applicatielogs is een aandachtspunt. |
+| **Radiology Studie opslaan / aanmaken** | **Gedeeltelijk**. Alleen database-auditing. Geen applicatielogging. | Nee | **Gedeeltelijk**. Database-auditing legt *wie* (`creator`), *wat* (studie) en *wanneer* (`date_created`) vast. Geen applicatielogging. |
+| **Beheer van modaliteiten (CRUD)** | **Gedeeltelijk**. Alleen database-auditing. Geen applicatielogging. | Nee | **Gedeeltelijk**. Database-auditing legt *wie* (`creator` / `changed_by`), *wat* (modality) en *wanneer* (`date_created` / `date_changed`) vast. Geen administratieve applicatielogging. |
+| **Beheer van templates (CRUD)** | **Gedeeltelijk**. Database-auditing legt mutaties vast. Applicatielogs registreren alleen fouten. | Nee | **Gedeeltelijk**. Mutaties worden in de database geaudit met *wie*, *wat*, *wanneer*. Applicatielogs bevatten alleen debug/error details en geen functionele audit-logs van succesvolle acties. |
+| **Systeemopstart en netwerk/PACS configuratie** | **Ja** (via applicatielogs). | Nee | **Ja**. Systeem logt opstartfase en geladen PACS hosts. Metadata: *wat* (opstartfase/configuratie), *wanneer* (log timestamp). *Wie* is hier de applicatieserver zelf. |
+| **Systeemfouten en data-binding exceptions** | **Ja** (via applicatielogs). | Nee | **Ja**. Technische bindings- en XML-validatiefouten worden gelogd onder `ERROR`-niveau. Metadata: *wat* (foutmelding/stacktrace) en *wanneer* (log timestamp) zijn aanwezig. |
+
 ---
 
 ### 3. Geïdentificeerd Beveiligingsrisico (Gap)
@@ -184,3 +204,89 @@ Er is een ernstig privacy- en compliance-risico (lekken van PII) geïdentificeer
   1. Pas de logregel aan om **geen PII** meer te loggen. Log in plaats daarvan alleen technische identifiers (zoals de `patient.getUuid()` of `order.getUuid()`).
   2. Implementeer gestructureerde applicatielogging voor overige kritieke acties (zoals het bekijken of wijzigen van rapporten) zonder gevoelige gegevens te loggen.
   3. Los de compileerfouten op door de SLF4J logger correct te declareren en de niet-bestaande aanroep naar `.getModality()` te verwijderen.
+
+---
+
+### 4. Huidige versus Gewenste Situatie (Gap Analyse)
+
+Om volledig te voldoen aan de NEN-7510 8.15 normering (en de AVG/GDPR), moet het gat tussen de huidige status van de module en de gewenste situatie overbrugd worden. Onderstaande tabel detailleert dit verschil en beschrijft de benodigde acties.
+
+| Beveiligingsaspect | Huidige Situatie (As-Is) | Gewenste Situatie (To-Be) | Benodigde Actie(s) / Remediatie |
+| :--- | :--- | :--- | :--- |
+| **Inzage-auditing (Read Auditing)** | Er wordt **niets** gelogd wanneer een gebruiker patiëntgegevens inziet (zoals het openen van de radiology dashboard-tab, het raadplegen van orders of het inzien van rapporten). | Elke handmatige raadpleging of export van patiëntgegevens genereert een logregel op applicativeniveau (SIEM) met de metadata: *wie*, *wat* en *wanneer*. | Voeg log-statements toe aan controllers (`RadiologyReportFormController`, `RadiologyOrderDetailsPortletController`) en REST resources (`RadiologyReportResource`) bij ophaal-acties (GET). |
+| **Mutatie-auditing in applicatielogs** | Mutaties (creëren, wijzigen, verwijderen) worden alleen in de database bijgehouden. Applicatielogging voor orders (`logRadiologyOrderSubmission`) is inactief (nooit aangeroepen). | Alle mutaties op orders en rapporten worden realtime weggeschreven naar de applicatielogs ten behoeve van SIEM-monitoring. | 1. Activeer en roep `logRadiologyOrderSubmission` aan in `placeRadiologyOrder`. <br>2. Voeg vergelijkbare logs toe bij `discontinueRadiologyOrder`, `saveRadiologyReport` en `voidRadiologyReport`. |
+| **Bescherming van patiëntprivacy (PII)** | De inactieve methode `logRadiologyOrderSubmission` logt direct herleidbare patiëntgegevens (volledige naam en geboortedatum) in platte tekst. | Applicatielogs bevatten **geen direct herleidbare PII** (conform AVG). Koppeling vindt uitsluitend plaats via UUID's en accession numbers. | Vervang de parameters `patient.getPersonName()` en `patient.getBirthdate()` in de logmethode door `patient.getUuid()`. |
+| **Logging van administratieve CRUD-acties** | Wijzigingen aan modaliteiten (bijv. MRI, CT) en rapporttemplates (MRRT) worden niet weggeschreven naar de applicatielogs. | Wijzigingen in de systeemconfiguratie of metadata-tabellen genereren een duidelijke `INFO` logregel in de applicatielogs met metadata. | Voeg `log.info` toe aan de bewerkings- en verwijderingsmethoden in de service-laag van modaliteiten en templates. |
+| **Gestructureerd Logformaat** | Bestaande logregels zijn ongestructureerde tekstregels, wat automatische verwerking en monitoring bemoeilijkt. | Alle audit-events in de applicatielogs gebruiken een gestructureerd formaat (zoals JSON of key-value pairs) voor eenvoudige SIEM-parsing. | Implementeer een gestructureerde log-helper of format-sjabloon in de module (bijv. `event=... user=... target=...`). |
+
+---
+
+### 5. Gedetailleerde Gap-Definities (Klinisch & Beveiliging)
+
+De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zijn expliciet geïdentificeerd als een **Gap** ten opzichte van de NEN-7510 8.15 / A.12.4 normering:
+
+* **Gap 1: Ontbreken van Inzage-auditing (Read Auditing) op Dossiers**
+  * *Omschrijving:* Er vindt geen logging plaats wanneer een medewerker of arts de radiologie-tab van een patiëntdossier openraadt.
+  * *Normimpact:* Zeer kritiek. Ongeautoriseerde raadpleging van dossiers kan achteraf niet worden geaudit.
+
+* **Gap 2: Ontbreken van Inzage-auditing op Orders en Rapporten**
+  * *Omschrijving:* Geen logging bij het inzien, lezen of downloaden van individuele orders en radiology-rapporten.
+  * *Normimpact:* Kritiek. Inzage in gevoelige medische resultaten is niet herleidbaar (*wie* bekeek *wat* en *wanneer*).
+
+* **Gap 3: Inactieve logging van Order-aanmaak & PII-lek**
+  * *Omschrijving:* Het indienen van een radiology order genereert op dit moment geen actieve applicatielogregel omdat de service-laag de methode `logRadiologyOrderSubmission` niet aanroept. Bovendien lekt deze methode direct herleidbare PII (volledige patiëntennaam en geboortedatum) in platte tekst, en veroorzaakt het compileerfouten.
+  * *Normimpact:* Hoog. Geen actieve audit trail voor mutaties in SIEM, en schending van de AVG/GDPR-privacyrichtlijnen.
+
+* **Gap 4: Ontbreken van realtime logging bij het annuleren of stopzetten van orders**
+  * *Omschrijving:* Acties om een order stop te zetten (`discontinueRadiologyOrder`) worden niet weggeschreven naar de applicatielogs.
+  * *Normimpact:* Medium. Kritieke workflow-wijzigingen zijn niet realtime zichtbaar voor beveiligingsmonitoring.
+
+* **Gap 5: Ontbreken van realtime logging bij het aanmaken en voltooien van rapporten**
+  * *Omschrijving:* Het opstellen van concept-rapporten en het definitief maken/ondertekenen van rapporten wordt niet gelogd in de logbestanden.
+  * *Normimpact:* Medium. Geen operationeel toezicht op de levenscyclus van medische rapportages.
+
+* **Gap 6: Ontbreken van realtime logging bij het intrekken (voiden) van rapporten**
+  * *Omschrijving:* Het intrekken van rapporten (vanwege fouten) wordt alleen in de database vastgelegd, maar genereert geen applicatielogs.
+  * *Normimpact:* Medium. Verhoogd risico op ongemerkte aanpassingen in medische verslaglegging.
+
+* **Gap 7: Geen logging van beheer en configuratie (Modaliteiten & Templates)**
+  * *Omschrijving:* Het wijzigen van de systeemconfiguratie (bijv. aanmaken van modalities of uploaden van MRRT rapporttemplates) genereert geen applicatielogs.
+  * *Normimpact:* Laag/Medium. Wijzigingen in het gedrag of de structuur van de module zijn administratief niet direct traceerbaar.
+
+---
+
+### 6. Prioriteitenlijst voor Implementatie
+
+Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellijk en in fasen worden geïmplementeerd volgens onderstaande prioriteitenlijst:
+
+#### Prioriteit 1: Corrigeren en Activeren Order-aanmaak Logging (Onmiddellijk)
+* **Doel:** Activeren van ordercreatie-auditing zonder privacy-risico's.
+* **Actie:**
+  1. Pas `logRadiologyOrderSubmission` in `RadiologyOrderServiceImpl.java` aan: vervang namen en geboortedata door `patient.getUuid()` en `order.getUuid()`.
+  2. Los de compileerfouten op door de SLF4J logger correct te declareren en de vervallen `.getModality()`-aanroep te verwijderen.
+  3. Roep `logRadiologyOrderSubmission(result)` aan direct na het opslaan in `placeRadiologyOrder(...)`.
+
+#### Prioriteit 2: Implementeren van Read-auditing (Kritiek)
+* **Doel:** Voldoen aan de wettelijke verplichting om inzage in medische dossiers herleidbaar te maken.
+* **Actie:**
+  1. Voeg logging toe in `RadiologyDashboardOrdersTabController` en `RadiologyDashboardReportsTabController` bij het laden van patiëntgegevens.
+  2. Voeg logging toe in `RadiologyReportFormController` (GET-request) bij het inzien van een specifiek rapport.
+  3. Logformaat: `event=patient_record_accessed user_uuid=... patient_uuid=... type=dashboard/report`
+
+#### Prioriteit 3: Logging van Kritieke Mutaties en Annuleringen (Hoog)
+* **Doel:** Zichtbaarheid van ingetrokken of geannuleerde klinische gegevens.
+* **Actie:**
+  1. Voeg logging toe aan `discontinueRadiologyOrder(...)` in `RadiologyOrderServiceImpl.java`. Log de actor, de order en de reden (`nonCodedDiscontinueReason`).
+  2. Voeg logging toe aan `voidRadiologyReport(...)` in `RadiologyReportServiceImpl.java`. Log de actor, het rapport en de reden (`voidReason`).
+
+#### Prioriteit 4: Logging van Rapport-levenscyclus (Medium)
+* **Doel:** Het volgen van het opstellen en definitief maken van medische rapporten.
+* **Actie:**
+  1. Log het opslaan van concepten in `saveRadiologyReportDraft(...)` en het definitief maken in `saveRadiologyReport(...)`.
+
+#### Prioriteit 5: Beheer en Gestructureerd Logformaat (Laag/Medium)
+* **Doel:** Auditing van administratieve rollen en vereenvoudiging van automatische SIEM-analyse.
+* **Actie:**
+  1. Log toevoegen aan modaliteit- en template CRUD-acties in de respectievelijke service-implementaties.
+  2. Formatteer alle applicatielogs volgens een eenduidige key-value of JSON structuur.
+

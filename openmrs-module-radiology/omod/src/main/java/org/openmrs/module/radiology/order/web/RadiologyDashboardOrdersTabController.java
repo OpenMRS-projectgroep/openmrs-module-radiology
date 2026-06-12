@@ -10,13 +10,18 @@
 package org.openmrs.module.radiology.order.web;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Order.Urgency;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.openmrs.module.radiology.web.RadiologyWebConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(RadiologyDashboardOrdersTabController.RADIOLOGY_ORDERS_TAB_REQUEST_MAPPING)
 public class RadiologyDashboardOrdersTabController {
     
+    
+    private static final Logger log = LoggerFactory.getLogger(RadiologyDashboardOrdersTabController.class);
     
     public static final String RADIOLOGY_ORDERS_TAB_REQUEST_MAPPING = "/module/radiology/radiologyDashboardOrdersTab.htm";
     
@@ -61,6 +68,14 @@ public class RadiologyDashboardOrdersTabController {
                 modelAndView.setViewName("redirect:" + tabLink);
             }
         }
+        
+        String patientId = request.getParameter("patientId");
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("patient_id", patientId != null ? patientId : "unknown");
+        logData.put("view", "orders");
+        log.info(LogUtils.formatAsJson("dashboard_view", logData));
         
         return modelAndView;
     }

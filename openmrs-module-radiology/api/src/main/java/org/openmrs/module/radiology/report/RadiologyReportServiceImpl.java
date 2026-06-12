@@ -10,12 +10,16 @@
 package org.openmrs.module.radiology.report;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.radiology.order.RadiologyOrder;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +81,15 @@ class RadiologyReportServiceImpl extends BaseOpenmrsService implements Radiology
         if (radiologyReportDAO.hasRadiologyOrderCompletedRadiologyReport(radiologyReport.getRadiologyOrder())) {
             throw new APIException("radiology.RadiologyReport.cannot.saveDraft.already.reported");
         }
-        return radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        RadiologyReport result = radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("report_uuid", result.getUuid());
+        log.info(LogUtils.formatAsJson("report_draft_saved", logData));
+        
+        return result;
     }
     
     /**
@@ -99,7 +111,16 @@ class RadiologyReportServiceImpl extends BaseOpenmrsService implements Radiology
         if (radiologyReport.getStatus() == RadiologyReportStatus.COMPLETED) {
             throw new APIException("radiology.RadiologyReport.cannot.void.completed");
         }
-        return radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        RadiologyReport result = radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("report_uuid", result.getUuid());
+        logData.put("reason", voidReason);
+        log.info(LogUtils.formatAsJson("report_voided", logData));
+        
+        return result;
     }
     
     /**
@@ -126,7 +147,15 @@ class RadiologyReportServiceImpl extends BaseOpenmrsService implements Radiology
         }
         radiologyReport.setDate(new Date());
         radiologyReport.setStatus(RadiologyReportStatus.COMPLETED);
-        return radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        RadiologyReport result = radiologyReportDAO.saveRadiologyReport(radiologyReport);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("report_uuid", result.getUuid());
+        log.info(LogUtils.formatAsJson("report_finalized", logData));
+        
+        return result;
     }
     
     /**

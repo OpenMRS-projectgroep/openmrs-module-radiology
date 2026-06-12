@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.radiology.report.web;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -17,7 +20,11 @@ import org.openmrs.module.radiology.order.RadiologyOrder;
 import org.openmrs.module.radiology.report.RadiologyReport;
 import org.openmrs.module.radiology.report.RadiologyReportService;
 import org.openmrs.module.radiology.report.RadiologyReportValidator;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.openmrs.web.WebConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -36,6 +43,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = RadiologyReportFormController.RADIOLOGY_REPORT_FORM_REQUEST_MAPPING)
 public class RadiologyReportFormController {
     
+    
+    private static final Logger log = LoggerFactory.getLogger(RadiologyReportFormController.class);
     
     protected static final String RADIOLOGY_REPORT_FORM_REQUEST_MAPPING = "/module/radiology/radiologyReport.form";
     
@@ -89,6 +98,19 @@ public class RadiologyReportFormController {
         final ModelAndView modelAndView = new ModelAndView(RADIOLOGY_REPORT_FORM_VIEW);
         addObjectsToModelAndView(modelAndView, radiologyReport);
         modelAndView.addObject(new VoidRadiologyReportRequest());
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("report_uuid", radiologyReport.getUuid() != null ? radiologyReport.getUuid() : "unknown");
+        logData.put("patient_uuid", radiologyReport.getRadiologyOrder() != null && radiologyReport.getRadiologyOrder()
+                .getPatient() != null
+                        ? radiologyReport.getRadiologyOrder()
+                                .getPatient()
+                                .getUuid()
+                        : "unknown");
+        log.info(LogUtils.formatAsJson("report_viewed", logData));
+        
         return modelAndView;
     }
     
