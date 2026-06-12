@@ -9,11 +9,14 @@
  */
 package org.openmrs.module.radiology.modality;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +43,15 @@ class RadiologyModalityServiceImpl extends BaseOpenmrsService implements Radiolo
         if (radiologyModality == null) {
             throw new IllegalArgumentException("radiologyModality cannot be null");
         }
-        return radiologyModalityDAO.saveRadiologyModality(radiologyModality);
+        RadiologyModality result = radiologyModalityDAO.saveRadiologyModality(radiologyModality);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("modality_uuid", result.getUuid());
+        log.info(LogUtils.formatAsJson("modality_saved", logData));
+        
+        return result;
     }
     
     /**
@@ -57,7 +68,16 @@ class RadiologyModalityServiceImpl extends BaseOpenmrsService implements Radiolo
             throw new IllegalArgumentException(Context.getMessageSourceService()
                     .getMessage("general.voidReason.empty"));
         }
-        return radiologyModalityDAO.saveRadiologyModality(radiologyModality);
+        RadiologyModality result = radiologyModalityDAO.saveRadiologyModality(radiologyModality);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("modality_uuid", result.getUuid());
+        logData.put("reason", reason);
+        log.info(LogUtils.formatAsJson("modality_retired", logData));
+        
+        return result;
     }
     
     /**

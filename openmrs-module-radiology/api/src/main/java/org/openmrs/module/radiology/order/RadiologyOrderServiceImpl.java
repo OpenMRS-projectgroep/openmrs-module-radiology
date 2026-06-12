@@ -10,7 +10,9 @@
 package org.openmrs.module.radiology.order;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openmrs.Encounter;
 import org.openmrs.Order;
@@ -24,6 +26,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.radiology.RadiologyProperties;
 import org.openmrs.module.radiology.study.RadiologyStudyService;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
@@ -96,6 +99,8 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
         
         final RadiologyOrder result = (RadiologyOrder) orderService.saveOrder(radiologyOrder, orderContext);
         this.radiologyStudyService.saveRadiologyStudy(result.getStudy());
+        
+        logRadiologyOrderSubmission(result);
         return result;
     }
     
@@ -146,6 +151,13 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
         }
         
         final Encounter encounter = this.saveRadiologyOrderEncounter(radiologyOrder.getPatient(), orderer, new Date());
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("order_uuid", radiologyOrder.getUuid());
+        logData.put("reason", nonCodedDiscontinueReason);
+        log.info(LogUtils.formatAsJson("order_discontinued", logData));
         
         return this.orderService.discontinueOrder(radiologyOrder, nonCodedDiscontinueReason, null, orderer, encounter);
     }
@@ -220,12 +232,21 @@ class RadiologyOrderServiceImpl extends BaseOpenmrsService implements RadiologyO
         org.openmrs.Patient patient = order.getPatient();
         String patientUuid = (patient != null) ? patient.getUuid() : "unknown";
         String orderUuid = order.getUuid();
-        
         String conceptDisplay = (order.getConcept() != null) ? order.getConcept()
                 .getDisplayString() : "unknown";
+        String scheduledDate = (order.getScheduledDate() != null) ? order.getScheduledDate()
+                .toString() : "null";
+        String accessionNumber = (order.getAccessionNumber() != null) ? order.getAccessionNumber() : "null";
         
-        log.info("[RADIOLOGY] Order submitted:" + " patientUuid=" + patientUuid + " orderUuid=" + orderUuid + " concept="
-                + conceptDisplay + " scheduledDate=" + order.getScheduledDate() + " accessionNumber="
-                + order.getAccessionNumber());
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("order_uuid", orderUuid);
+        logData.put("patient_uuid", patientUuid);
+        logData.put("concept", conceptDisplay);
+        logData.put("scheduledDate", scheduledDate);
+        logData.put("accessionNumber", accessionNumber);
+        
+        log.info(LogUtils.formatAsJson("order_submitted", logData));
     }
 }

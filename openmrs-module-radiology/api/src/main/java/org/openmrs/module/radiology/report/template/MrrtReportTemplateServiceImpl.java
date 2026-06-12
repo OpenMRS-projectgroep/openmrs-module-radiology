@@ -15,14 +15,18 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.radiology.RadiologyProperties;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +85,15 @@ class MrrtReportTemplateServiceImpl extends BaseOpenmrsService implements MrrtRe
         if (existing != null) {
             throw new APIException("Template already exist in the system.");
         }
-        return mrrtReportTemplateDAO.saveMrrtReportTemplate(template);
+        MrrtReportTemplate result = mrrtReportTemplateDAO.saveMrrtReportTemplate(template);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("template_uuid", result.getUuid());
+        log.info(LogUtils.formatAsJson("template_saved", logData));
+        
+        return result;
     }
     
     /**
@@ -94,6 +106,13 @@ class MrrtReportTemplateServiceImpl extends BaseOpenmrsService implements MrrtRe
             throw new IllegalArgumentException("template cannot be null");
         }
         mrrtReportTemplateDAO.purgeMrrtReportTemplate(template);
+        
+        Map<String, String> logData = new LinkedHashMap<>();
+        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                .getUuid() : "unknown");
+        logData.put("template_uuid", template.getUuid());
+        log.info(LogUtils.formatAsJson("template_purged", logData));
+        
         Path templatePath = Paths.get(template.getPath());
         try {
             Files.delete(templatePath);

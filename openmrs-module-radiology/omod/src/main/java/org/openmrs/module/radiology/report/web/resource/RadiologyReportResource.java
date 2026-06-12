@@ -9,9 +9,13 @@
  */
 package org.openmrs.module.radiology.report.web.resource;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.radiology.report.RadiologyReport;
 import org.openmrs.module.radiology.report.RadiologyReportService;
+import org.openmrs.module.radiology.util.LogUtils;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -23,6 +27,8 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.RestConstants2_0;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link Resource} for {@link RadiologyReport}, supporting GET operations.
@@ -31,6 +37,8 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.RestCons
         supportedOpenmrsVersions = { "2.0.*" })
 public class RadiologyReportResource extends DataDelegatingCrudResource<RadiologyReport> {
     
+    
+    private static final Logger log = LoggerFactory.getLogger(RadiologyReportResource.class);
     
     /**
      * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#getRepresentationDescription(org.openmrs.module.webservices.rest.web.representation.Representation)
@@ -103,8 +111,24 @@ public class RadiologyReportResource extends DataDelegatingCrudResource<Radiolog
     @Override
     public RadiologyReport getByUniqueId(String uniqueId) {
         
-        return Context.getService(RadiologyReportService.class)
+        RadiologyReport result = Context.getService(RadiologyReportService.class)
                 .getRadiologyReportByUuid(uniqueId);
+        
+        if (result != null) {
+            Map<String, String> logData = new LinkedHashMap<>();
+            logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                    .getUuid() : "unknown");
+            logData.put("report_uuid", result.getUuid() != null ? result.getUuid() : "unknown");
+            logData.put("patient_uuid", result.getRadiologyOrder() != null && result.getRadiologyOrder()
+                    .getPatient() != null
+                            ? result.getRadiologyOrder()
+                                    .getPatient()
+                                    .getUuid()
+                            : "unknown");
+            log.info(LogUtils.formatAsJson("report_viewed", logData));
+        }
+        
+        return result;
     }
     
     /**
