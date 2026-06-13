@@ -48,7 +48,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaCompilerVersion>1.8</javaCompilerVersion>
-		<openMRSVersion>2.7.9</openMRSVersion>
+		<openMRSVersion>2.8.7</openMRSVersion>
 		<openmrs-legacyui-version>1.2</openmrs-legacyui-version>
 		<openmrs-webservicesrest-version>2.24.0</openmrs-webservicesrest-version>
 		<maven-formatter-plugin-version>1.6.0</maven-formatter-plugin-version>
