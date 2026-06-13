@@ -57,9 +57,14 @@ public class MrrtReportTemplateValidatorComponentTest extends BaseModuleContextS
      * @return the file on given path
      */
     private File getFile(String path) {
-        return new File(getClass().getClassLoader()
-                .getResource(path)
-                .getFile());
+        try {
+            return new File(getClass().getClassLoader()
+                    .getResource(path)
+                    .toURI());
+        }
+        catch (java.net.URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /**

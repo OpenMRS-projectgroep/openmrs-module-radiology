@@ -46,8 +46,13 @@ class RadiologyModalityServiceImpl extends BaseOpenmrsService implements Radiolo
         RadiologyModality result = radiologyModalityDAO.saveRadiologyModality(radiologyModality);
         
         Map<String, String> logData = new LinkedHashMap<>();
-        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
-                .getUuid() : "unknown");
+        try {
+            logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                    .getUuid() : "unknown");
+        }
+        catch (Exception e) {
+            logData.put("user_uuid", "unknown");
+        }
         logData.put("modality_uuid", result.getUuid());
         log.info(LogUtils.formatAsJson("modality_saved", logData));
         
@@ -71,8 +76,13 @@ class RadiologyModalityServiceImpl extends BaseOpenmrsService implements Radiolo
         RadiologyModality result = radiologyModalityDAO.saveRadiologyModality(radiologyModality);
         
         Map<String, String> logData = new LinkedHashMap<>();
-        logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
-                .getUuid() : "unknown");
+        try {
+            logData.put("user_uuid", Context.getAuthenticatedUser() != null ? Context.getAuthenticatedUser()
+                    .getUuid() : "unknown");
+        }
+        catch (Exception e) {
+            logData.put("user_uuid", "unknown");
+        }
         logData.put("modality_uuid", result.getUuid());
         logData.put("reason", reason);
         log.info(LogUtils.formatAsJson("modality_retired", logData));

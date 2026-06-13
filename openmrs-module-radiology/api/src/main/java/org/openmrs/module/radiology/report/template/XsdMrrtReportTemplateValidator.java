@@ -64,7 +64,7 @@ public class XsdMrrtReportTemplateValidator implements MrrtReportTemplateValidat
         final Schema schema;
         final Validator validator;
         try (InputStream in = IOUtils.toInputStream(mrrtTemplate)) {
-            schema = factory.newSchema(getSchemaFile());
+            schema = factory.newSchema(getSchemaUrl());
             validator = schema.newValidator();
             validator.setErrorHandler(new ErrorHandler() {
                 
@@ -96,9 +96,8 @@ public class XsdMrrtReportTemplateValidator implements MrrtReportTemplateValidat
         }
     }
     
-    private File getSchemaFile() {
-        return new File(getClass().getClassLoader()
-                .getResource(MRRT_REPORT_TEMPLATE_SCHEMA_FILE)
-                .getFile());
+    private java.net.URL getSchemaUrl() {
+        return getClass().getClassLoader()
+                .getResource(MRRT_REPORT_TEMPLATE_SCHEMA_FILE);
     }
 }

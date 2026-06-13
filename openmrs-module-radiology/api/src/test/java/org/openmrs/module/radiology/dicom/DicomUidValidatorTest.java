@@ -20,13 +20,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.radiology.util.TestLogAppender;
 
 /**
  * Tests {@see DicomUidValidator}.
  */
 public class DicomUidValidatorTest {
     
+    
+    private TestLogAppender logAppender;
+    
+    @Before
+    public void setUpLogAppender() {
+        logAppender = new TestLogAppender();
+        logAppender.attach(DicomUidValidator.class);
+    }
+    
+    @After
+    public void tearDownLogAppender() {
+        logAppender.detach();
+    }
     
     /**
      * @see DicomUidValidator#isValid(String)
@@ -256,5 +273,36 @@ public class DicomUidValidatorTest {
         for (String uid : validUids) {
             assertTrue(DicomUidValidator.isValid(uid));
         }
+    }
+    
+    /**
+     * @see DicomUidValidator#isValid(String)
+     */
+    @Test
+    public void isValid_shouldLogWarningForInvalidUid() throws Exception {
+        
+        String invalidUid = "INVALID.UID.###";
+        
+        assertFalse(DicomUidValidator.isValid(invalidUid));
+        
+        assertTrue("Expected a WARN log event to be captured", logAppender.getEvents()
+                .size() >= 1);
+        assertTrue("Expected the log event to be WARN level", logAppender.hasEventAtLevel(Level.WARN));
+        assertTrue("Expected log message to contain 'invalid_dicom_uid_attempt'",
+            logAppender.hasMessageContaining("invalid_dicom_uid_attempt"));
+        assertTrue("Expected log message to contain the invalid UID value", logAppender.hasMessageContaining(invalidUid));
+    }
+    
+    /**
+     * @see DicomUidValidator#isValid(String)
+     */
+    @Test
+    public void isValid_shouldNotLogWarningForValidUid() throws Exception {
+        
+        String validUid = "1.2.840.10008.1.2";
+        
+        assertTrue(DicomUidValidator.isValid(validUid));
+        
+        assertFalse("Expected no WARN log event for a valid UID", logAppender.hasEventAtLevel(Level.WARN));
     }
 }

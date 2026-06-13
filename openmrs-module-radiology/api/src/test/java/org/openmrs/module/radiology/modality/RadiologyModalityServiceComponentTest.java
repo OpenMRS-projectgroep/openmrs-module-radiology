@@ -10,6 +10,8 @@
 package org.openmrs.module.radiology.modality;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -17,12 +19,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.radiology.util.TestLogAppender;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,6 +61,66 @@ public class RadiologyModalityServiceComponentTest extends BaseModuleContextSens
     @Before
     public void setUp() throws Exception {
         executeDataSet(TEST_DATASET);
+    }
+    
+    /**
+     * Verifies that a successful save of a RadiologyModality fires a log event with event type
+     * {@code modality_saved} at INFO level.
+     */
+    @Test
+    public void shouldLogEventWhenSavingRadiologyModality() throws Exception {
+        
+        TestLogAppender logAppender = new TestLogAppender();
+        logAppender.attach(RadiologyModalityServiceImpl.class);
+        try {
+            RadiologyModality radiologyModality = new RadiologyModality();
+            radiologyModality.setAeTitle("CT99");
+            radiologyModality.setName("TestScanner LogEvent");
+            
+            radiologyModalityService.saveRadiologyModality(radiologyModality);
+            
+            assertNotNull("Modality should have been saved", radiologyModality.getModalityId());
+            assertTrue("Expected at least one INFO log event after save", logAppender.getEvents()
+                    .size() >= 1);
+            assertTrue("Expected the log event to be at INFO level", logAppender.hasEventAtLevel(Level.INFO));
+            assertTrue("Expected log message to contain 'modality_saved'",
+                logAppender.hasMessageContaining("modality_saved"));
+            assertTrue("Expected log message to contain the modality UUID",
+                logAppender.hasMessageContaining(radiologyModality.getUuid()));
+        }
+        finally {
+            logAppender.detach();
+        }
+    }
+    
+    /**
+     * Verifies that calling a service method without an authenticated user throws an
+     * {@link APIAuthenticationException}, representing a failed (security) action.
+     * This simulates an unauthorized API call and ensures no success audit log is emitted.
+     */
+    @Test
+    public void shouldThrowSecurityExceptionWhenUnauthorizedAccessOccurs() throws Exception {
+        
+        TestLogAppender logAppender = new TestLogAppender();
+        logAppender.attach(RadiologyModalityServiceImpl.class);
+        try {
+            Context.logout();
+            
+            try {
+                RadiologyModality radiologyModality = new RadiologyModality();
+                radiologyModality.setAeTitle("CT01");
+                radiologyModality.setName("Unauthorized Scanner");
+                radiologyModalityService.saveRadiologyModality(radiologyModality);
+                fail("Expected APIAuthenticationException for unauthenticated save");
+            }
+            catch (APIAuthenticationException ex) {
+                assertFalse("Unauthorized save must not emit modality_saved audit log",
+                    logAppender.hasMessageContaining("modality_saved"));
+            }
+        }
+        finally {
+            logAppender.detach();
+        }
     }
     
     @Test
