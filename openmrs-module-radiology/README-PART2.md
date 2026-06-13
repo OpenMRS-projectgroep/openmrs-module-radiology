@@ -51,6 +51,8 @@ Voor het draaien van geautomatiseerde of handmatige acceptatietests is een apart
 
 ### Testomgeving opstarten
 Om de geïsoleerde testomgeving inclusief de `demo-data.sql` dataset te starten, voer uit:
+mvn test -pl api
+mvn test -pl api -Dtest=*Dicom*
 
 ```bash
 docker compose -f docker-compose.test.yml up -d
