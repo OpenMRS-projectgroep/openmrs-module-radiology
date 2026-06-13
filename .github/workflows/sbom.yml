@@ -2,9 +2,9 @@ name: CI with SBOM
 
 on:
   push:
-    branches: [ SBOM-genereren ]
+    branches: [ SBOM-genereren, main ]
   pull_request:
-    branches: [ SBOM-genereren ]
+    branches: [ SBOM-genereren, main ]
   workflow_dispatch:
 
 jobs:
