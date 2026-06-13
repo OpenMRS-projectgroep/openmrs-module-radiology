@@ -97,6 +97,24 @@ JaCoCo is geconfigureerd in de parent `pom.xml`. Na het uitvoeren van de tests w
 mvn clean test
 ```
 
+##### Code Coverage Norm & Onderbouwing
+
+Binnen de Radiologie-module hanteren we een **target code coverage van minimaal 75%** voor de gecombineerde codebase. 
+
+###### Waarom geen 100%?
+Blind streven naar 100% code coverage is niet effectief en leidt tot inefficiënt gebruik van ontwikkeltijd. Het dwingt ontwikkelaars om triviale onderdelen te testen (zoals getters/setters, constante-klassen zoals `RadiologyWebConstants`, configuration mappings en boilerplate code) of om complexe OpenMRS Core libraries overmatig te mocken. Dit verhoogt de onderhoudslast van de testsuite aanzienlijk, zonder dat het daadwerkelijk kritieke bugs voorkomt.
+
+###### Risico-gebaseerde prioritering (Context van de module)
+Onze teststrategie richt zich daarom op risico en bedrijfskritische functionaliteit:
+
+1. **High-Risk Paden (Kritieke zorg-functionaliteit): Target > 85%**
+   * *Wat valt hieronder:* De core services en validatieregels in de `api`-module, zoals `RadiologyOrderService` (aanmaken en stopzetten van radiology orders), `RadiologyReportService` (opstellen en afronden van diagnoses/verslagen), en `RadiologyStudyService` (koppelen van DICOM metadata).
+   * *Onderbouwing:* Fouten in deze kritieke klinische workflows kunnen direct impact hebben op de patiëntveiligheid (bijv. verkeerd gekoppelde beelden of verloren verslagen). Deze functionaliteiten moeten daarom robuust gedekt zijn met unit- en componenttests.
+   
+2. **Low-Risk / Out-of-Scope Paden (Legacy UI & Boilerplate): Target ~ 60%**
+   * *Wat valt hieronder:* De Spring MVC controllers en legacy JSP-schermen (`omod`-submodule) voor het oude OpenMRS dashboard.
+   * *Onderbouwing:* Deze legacy UI-code is op termijn genomineerd voor uitfasering ten gunste van modernere frontend-frameworks (zoals de OpenMRS 3.x microfrontends). Het schrijven van complexe integratietests voor Spring-controllers die gekoppeld zijn aan verouderde JSP-technologie levert weinig ROI op. Voor deze laag vertrouwen we primair op basale REST-resource tests en end-to-end acceptatietests (`acceptanceTest/`).
+
 #### Docker
 
 Lees de bijbehorende [Docker gids](DOCKER.md).

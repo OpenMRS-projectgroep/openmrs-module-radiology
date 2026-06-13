@@ -605,7 +605,7 @@ public class RadiologyPropertiesComponentTest extends BaseModuleContextSensitive
      */
     @Test
     public void shouldCreateADirectoryAtGPValueIfItIsAnAbsolutePath() throws Exception {
-        File tempFolder = temporaryFolder.newFolder("/mrrt_templates");
+        File tempFolder = temporaryFolder.newFolder("mrrt_templates");
         administrationService.setGlobalProperty(RadiologyConstants.GP_MRRT_REPORT_TEMPLATE_DIR,
             tempFolder.getAbsolutePath());
         File templateHome = radiologyProperties.getReportTemplateHome();

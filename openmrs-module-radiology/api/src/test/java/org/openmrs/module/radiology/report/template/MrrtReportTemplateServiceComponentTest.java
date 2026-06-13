@@ -146,7 +146,7 @@ public class MrrtReportTemplateServiceComponentTest extends BaseModuleContextSen
      */
     private void setUpTemporaryFolder() throws IOException {
         
-        File tempFolder = temporaryFolder.newFolder("/mrrt_templates");
+        File tempFolder = temporaryFolder.newFolder("mrrt_templates");
         administrationService.setGlobalProperty(RadiologyConstants.GP_MRRT_REPORT_TEMPLATE_DIR,
             tempFolder.getAbsolutePath());
     }
