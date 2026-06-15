@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-class RadiologyReportServiceImpl extends BaseOpenmrsService implements RadiologyReportService {
+public class RadiologyReportServiceImpl extends BaseOpenmrsService implements RadiologyReportService {
     
     
     private static final Logger log = LoggerFactory.getLogger(RadiologyReportServiceImpl.class);
