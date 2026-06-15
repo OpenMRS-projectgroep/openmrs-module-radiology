@@ -51,12 +51,14 @@
 		<openMRSVersion>2.8.7</openMRSVersion>
 		<openmrs-legacyui-version>1.2</openmrs-legacyui-version>
 		<openmrs-webservicesrest-version>2.24.0</openmrs-webservicesrest-version>
-		<maven-formatter-plugin-version>2.2.0</maven-formatter-plugin-version>
+		<maven-formatter-plugin-version>1.6.0</maven-formatter-plugin-version>
 		<maven-formatter-plugin-style-java>${project.parent.basedir}/tools/formatter/java.xml</maven-formatter-plugin-style-java>
 		<maven-formatter-plugin-style-javascript>${project.parent.basedir}/tools/formatter/javascript.xml</maven-formatter-plugin-style-javascript>
 		<docker.maven.plugin.fabric8.version>0.48.1</docker.maven.plugin.fabric8.version>
 		<powermock.version>2.0.9</powermock.version>
 		<sonar.organization>openmrs-projectgroep</sonar.organization>
+		<sonar.projectKey>openmrs-projectgroep_openmrs-module-radiology</sonar.projectKey>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencyManagement>
@@ -64,7 +66,7 @@
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
-				<version>4.0.1</version>
+				<version>3.0.1</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -141,7 +143,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.1.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -239,7 +241,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.15</version>
+					<version>0.8.14</version>
 					<executions>
 						<execution>
 							<id>prepare-agent</id>

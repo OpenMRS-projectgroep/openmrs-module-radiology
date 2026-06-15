@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SonarLintProjectSettings">
-    <option name="bindingEnabled" value="true" />
-    <option name="projectKey" value="OpenMRS-projectgroep_openmrs-module-radiology" />
-    <option name="serverId" value="IntelliJ-radiology" />
-  </component>
-</project>
