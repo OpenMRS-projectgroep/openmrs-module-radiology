@@ -3,6 +3,6 @@
   <component name="SonarLintProjectSettings">
     <option name="bindingEnabled" value="true" />
     <option name="projectKey" value="OpenMRS-projectgroep_openmrs-module-radiology" />
-    <option name="serverId" value="IntelliJ-SonarQube" />
+    <option name="serverId" value="IntelliJ-radiology" />
   </component>
 </project>
