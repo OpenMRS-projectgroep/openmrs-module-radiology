@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-class MrrtReportTemplateServiceImpl extends BaseOpenmrsService implements MrrtReportTemplateService {
+public class MrrtReportTemplateServiceImpl extends BaseOpenmrsService implements MrrtReportTemplateService {
     
     
     private static final Logger log = LoggerFactory.getLogger(MrrtReportTemplateServiceImpl.class);
