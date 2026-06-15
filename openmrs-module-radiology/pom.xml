@@ -56,6 +56,7 @@
 		<maven-formatter-plugin-style-javascript>${project.parent.basedir}/tools/formatter/javascript.xml</maven-formatter-plugin-style-javascript>
 		<docker.maven.plugin.fabric8.version>0.48.1</docker.maven.plugin.fabric8.version>
 		<powermock.version>2.0.9</powermock.version>
+		<sonar.organization>openmrs-projectgroep</sonar.organization>
 	</properties>
 
 	<dependencyManagement>

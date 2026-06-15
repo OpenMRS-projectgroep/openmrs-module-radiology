@@ -39,9 +39,25 @@ services:
     networks:
       - backend-net
 
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube-server
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    networks:
+      - backend-net
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-extensions:/opt/sonarqube/extensions
+      - sonarqube-logs:/opt/sonarqube/logs
+
 volumes:
   openmrs-db-data:
   openmrs-app-data:
+  sonarqube-data:
+  sonarqube-extensions:
+  sonarqube-logs:
 
 networks:
   backend-net:
