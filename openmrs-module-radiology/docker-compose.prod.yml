@@ -57,9 +57,9 @@ services:
 volumes:
   openmrs-db-data-prod:
   openmrs-app-data-prod:
-  sonarqube-data:
-  sonarqube-extensions:
-  sonarqube-logs:
+  sonarqube-data-prod:
+  sonarqube-extensions-prod:
+  sonarqube-logs-prod:
 
 networks:
   prod-net:

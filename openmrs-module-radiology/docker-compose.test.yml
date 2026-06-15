@@ -57,9 +57,9 @@ services:
 volumes:
   openmrs-db-data-test:
   openmrs-app-data-test:
-  sonarqube-data:
-  sonarqube-extensions:
-  sonarqube-logs:
+  sonarqube-data-test:
+  sonarqube-extensions-test:
+  sonarqube-logs-test:
 
 networks:
   test-net:
