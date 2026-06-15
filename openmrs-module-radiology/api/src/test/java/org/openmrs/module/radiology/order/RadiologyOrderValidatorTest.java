@@ -1,3 +1,12 @@
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+ *
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
+ */
 package org.openmrs.module.radiology.order;
 
 import static org.junit.Assert.assertFalse;
@@ -13,7 +22,6 @@ import java.util.regex.Pattern;
 
 // Log4j imports om logs in-memory op te vangen
 import org.apache.log4j.Logger;
-import org.apache.log4j.StringMatchFilter;
 import org.apache.log4j.WriterAppender;
 import java.io.StringWriter;
 
@@ -88,20 +96,23 @@ public class RadiologyOrderValidatorTest {
 
     /**
      * ACCEPTATIECRITERIUM TEST:
-     * Controleert of er absoluut geen gevoelige gegevens in de logberichten belanden 
+     * Controleert of er absoluut geen gevoelige gegevens in de logberichten
+     * belanden
      * zodra er validatie-events of verwerkingen plaatsvinden.
      */
     @Test
     public void shouldNotLogSensitiveDataWhenValidationFails() throws Exception {
 
-        // 1. Arrange: Breng het object in een staat met gevoelige (gesimuleerde productie) data
+        // 1. Arrange: Breng het object in een staat met gevoelige (gesimuleerde
+        // productie) data
         String gevoeligeNaam = "Abderabbouh Jansen";
         String medischeStatuscode = "Z94.0"; // Voorbeeld van een ICD-10 medische code (Niertransplantatiestatus)
 
         PersonName personName = new PersonName("Abderabbouh", "", "Jansen");
         radiologyOrder.getPatient().addName(personName);
 
-        // Stel een concept in dat we als 'gevoelige medische code string' gaan misbruiken in omschrijvingen
+        // Stel een concept in dat we als 'gevoelige medische code string' gaan
+        // misbruiken in omschrijvingen
         Concept sensitiveConcept = new Concept(999);
         sensitiveConcept.setRetireReason(medischeStatuscode);
         radiologyOrder.setConcept(sensitiveConcept);
@@ -117,16 +128,19 @@ public class RadiologyOrderValidatorTest {
 
         // 3. Assert: Definieer patronen waar de logstring NOOIT aan mag voldoen
         Pattern naamPatroon = Pattern.compile(Pattern.quote(gevoeligeNaam), Pattern.CASE_INSENSITIVE);
-        Pattern medischeCodePatroon = Pattern.compile("^[A-Z]\\d{2}(\\.\\d)?$"); // Matcht ICD-10 codes zoals Z94.0 of S42
+        Pattern medischeCodePatroon = Pattern.compile("^[A-Z]\\d{2}(\\.\\d)?$"); // Matcht ICD-10 codes zoals Z94.0 of
+                                                                                 // S42
 
         // Controleer op de plaintext naam
         if (naamPatroon.matcher(gegenereerdeLogs).find()) {
-            fail("BEVEILIGINGSLEK: Plaintext patiëntnaam '" + gevoeligeNaam + "' aangetroffen in de logstream! Logs: " + gegenereerdeLogs);
+            fail("BEVEILIGINGSLEK: Plaintext patiëntnaam '" + gevoeligeNaam + "' aangetroffen in de logstream! Logs: "
+                    + gegenereerdeLogs);
         }
 
         // Controleer op de specifieke medische statuscode
         if (gegenereerdeLogs.contains(medischeStatuscode)) {
-            fail("BEVEILIGINGSLEK: Gevoelige medische statuscode '" + medischeStatuscode + "' aangetroffen in de logstream! Logs: " + gegenereerdeLogs);
+            fail("BEVEILIGINGSLEK: Gevoelige medische statuscode '" + medischeStatuscode
+                    + "' aangetroffen in de logstream! Logs: " + gegenereerdeLogs);
         }
     }
 
