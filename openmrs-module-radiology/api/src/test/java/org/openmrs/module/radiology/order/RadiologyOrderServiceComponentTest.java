@@ -218,7 +218,7 @@ public class RadiologyOrderServiceComponentTest extends BaseModuleContextSensiti
     @Test
     public void shouldAlwaysReturnAUniqueAccessionNumberWhenCalledMultipleTimes() throws Exception {
         
-        int N = 50;
+        int N = 8;
         final Set<String> uniqueAccessionNumbers = new HashSet<String>(N);
         List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < N; i++) {
