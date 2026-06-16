@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "maven"
-    directory: "/openmrs-module-radiology"
+    directory: "/"
     schedule:
       interval: "daily"
       time: "09:00"

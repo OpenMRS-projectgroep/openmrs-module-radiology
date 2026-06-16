@@ -1,4 +1,4 @@
-# NEN-7510 Gap-analyse: OpenMRS Radiology Module
+﻿# NEN-7510 Gap-analyse: OpenMRS Radiology Module
 
 Dit document beschrijft de gap-analyse van de **OpenMRS Radiology Module** ten opzichte van de **NEN-7510:2024-2** norm. Hierin evalueren we in hoeverre de module voldoet aan de gestelde controls en leveren we bewijslast uit de code.
 
@@ -10,7 +10,7 @@ Dit document beschrijft de gap-analyse van de **OpenMRS Radiology Module** ten o
 | :--- | :--- | :---: | :--- |
 | **A.8.3** | **Toegangsbeveiliging** | **Aanwezig** | Privileges gedefinieerd via Liquibase, afgedwongen met `@Authorized` AOP-annotaties op de service-laag en `<openmrs:hasPrivilege>` tags in JSP-bestanden. |
 | **A.8.5** | **Authenticatie** | **Gedeeltelijk** | De module delegeert alle gebruikersauthenticatie en sessiebeheer aan OpenMRS Core. Echter is er een kritiek beveiligingslek ontdekt met hardcoded PACS-beheerdersgegevens in de code (`RadiologyActivator.java`). |
-| **A.8.15** | **Logging** | **Gedeeltelijk** | OpenMRS database-auditing (wie, wat, wanneer) is volledig aanwezig voor alle entiteiten via Hibernate. Echter ontbreekt applicatie-logging voor klinische events en lekt de enige actieve logmethode gevoelige patiëntgegevens (PII) in platte tekst. |
+| **A.8.15** | **Logging** | **Gedeeltelijk** | OpenMRS database-auditing (wie, wat, wanneer) is volledig aanwezig voor alle entiteiten via Hibernate. Echter ontbreekt applicatie-logging voor klinische events en lekt de enige actieve logmethode gevoelige patiÃ«ntgegevens (PII) in platte tekst. |
 
 ---
 
@@ -32,8 +32,8 @@ De module dwingt deze toegangsbeveiliging af op zowel de **Service-laag (Java AP
 
 #### A. Databaseinrichting (Rollen en Privileges)
 De benodigde rollen en privileges voor de radiology-module worden tijdens de installatie automatisch in de OpenMRS-database aangemaakt via Liquibase-migraties. 
-* **Bestand:** [liquibase.xml](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/resources/liquibase.xml)
-  * **Rollen (Regels 137–157):** Hier worden vier specifieke rollen gedefinieerd:
+* **Bestand:** [liquibase.xml](file:///c:/Github/openmrs-module-radiology/api/src/main/resources/liquibase.xml)
+  * **Rollen (Regels 137â€“157):** Hier worden vier specifieke rollen gedefinieerd:
     * `Radiology: Referring physician`
     * `Radiology: Reading physician`
     * `Radiology: Performing physician`
@@ -48,19 +48,19 @@ De benodigde rollen en privileges voor de radiology-module worden tijdens de ins
 
 #### B. API & Service-laag (Java `@Authorized` Annotatie)
 De service-laag van de API gebruikt Spring AOP met de `@Authorized` annotatie van OpenMRS. Als een methode wordt aangeroepen, valideert OpenMRS of de huidige ingelogde gebruiker het vereiste privilege bezit. Zo niet, dan wordt een `APIAuthenticationException` opgeworpen.
-* **Privilege Definities:** [RadiologyPrivileges.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/RadiologyPrivileges.java) bevat alle privilege-constanten.
+* **Privilege Definities:** [RadiologyPrivileges.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/RadiologyPrivileges.java) bevat alle privilege-constanten.
 * **Voorbeelden in de code:**
-  * In [RadiologyStudyService.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/study/RadiologyStudyService.java#L43):
+  * In [RadiologyStudyService.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/study/RadiologyStudyService.java#L43):
     ```java
     @Authorized(RadiologyPrivileges.ADD_RADIOLOGY_STUDIES)
     RadiologyStudy saveRadiologyStudy(RadiologyStudy study);
     ```
-  * In [RadiologyOrderService.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/order/RadiologyOrderService.java#L54):
+  * In [RadiologyOrderService.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/order/RadiologyOrderService.java#L54):
     ```java
     @Authorized(RadiologyPrivileges.ADD_RADIOLOGY_ORDERS)
     RadiologyOrder saveRadiologyOrder(RadiologyOrder radiologyOrder);
     ```
-  * In [RadiologyReportService.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/report/RadiologyReportService.java#L56):
+  * In [RadiologyReportService.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/report/RadiologyReportService.java#L56):
     ```java
     @Authorized(RadiologyPrivileges.ADD_RADIOLOGY_REPORTS)
     RadiologyReport saveRadiologyReport(RadiologyReport radiologyReport);
@@ -69,7 +69,7 @@ De service-laag van de API gebruikt Spring AOP met de `@Authorized` annotatie va
 #### C. Presentatie-laag (JSP-bestanden)
 De UI-laag maakt gebruik van de OpenMRS JSP tag library om knoppen, formulieren en links af te schermen voor gebruikers die de bijbehorende privileges niet bezitten.
 * **Voorbeeld in JSP:** 
-  * In [radiologyDashboardOrdersTab.jsp](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/omod/src/main/webapp/radiologyDashboardOrdersTab.jsp#L327):
+  * In [radiologyDashboardOrdersTab.jsp](file:///c:/Github/openmrs-module-radiology/omod/src/main/webapp/radiologyDashboardOrdersTab.jsp#L327):
     ```jsp
     <openmrs:hasPrivilege privilege="Add Radiology Orders">
         <%-- Knop of formulier om orders toe te voegen --%>
@@ -78,7 +78,7 @@ De UI-laag maakt gebruik van de OpenMRS JSP tag library om knoppen, formulieren 
 
 #### D. Koppeling in tests
 Tijdens tests worden rollen en privileges expliciet gekoppeld om de werking te valideren.
-* **Bestand:** [demo-data.sql](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/acceptanceTest/resources/demo-data.sql#L82)
+* **Bestand:** [demo-data.sql](file:///c:/Github/openmrs-module-radiology/acceptanceTest/resources/demo-data.sql#L82)
   ```sql
   INSERT INTO `role_privilege` VALUES ('Radiology: Referring physician','Add Radiology Orders');
   ```
@@ -97,13 +97,13 @@ De Radiology-module implementeert zelf **geen** eigen login-schermen, wachtwoord
 
 ---
 
-### 3. Geïdentificeerd Beveiligingsrisico (Gap)
+### 3. GeÃ¯dentificeerd Beveiligingsrisico (Gap)
 
 Tijdens de gap-analyse is er een ernstig beveiligingslek ontdekt in de code van de Radiology-module. Er zijn hardcoded inloggegevens (credentials) opgenomen voor de admin-toegang tot de PACS/DICOM server in de activator class. Dit schendt het basisprincipe van NEN-7510 / ISO 27001 met betrekking tot het veilig opslaan en beheren van authenticatiegegevens.
 
-* **Locatie in de code:** [RadiologyActivator.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/RadiologyActivator.java#L45-L50)
+* **Locatie in de code:** [RadiologyActivator.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/RadiologyActivator.java#L45-L50)
   ```java
-  // PACS/DICOM server admin credentials — used for worklist push configuration
+  // PACS/DICOM server admin credentials â€” used for worklist push configuration
   private static final String PACS_HOST = "pacs.hospital.internal";
   private static final String PACS_ADMIN_USER = "radiology_admin";
   private static final String PACS_ADMIN_PASSWORD = "PACS@dm1n2021!";
@@ -121,7 +121,7 @@ Tijdens de gap-analyse is er een ernstig beveiligingslek ontdekt in de code van 
 ### 1. Status: **Gedeeltelijk** (Database-auditing is aanwezig via OpenMRS Core, maar applicatie-logging lekt PII en mist structuur)
 
 ### 2. Beschrijving van Implementatie
-De audit-logging binnen de Radiology-module is opgedeeld in twee categorieën: database-auditing en applicatielogs (bestanden).
+De audit-logging binnen de Radiology-module is opgedeeld in twee categorieÃ«n: database-auditing en applicatielogs (bestanden).
 
 #### A. Database-auditing (OpenMRS Core / Hibernate Interceptors)
 OpenMRS dwingt op database-niveau een strikte audit-trail af voor alle klinische entiteiten. Alle entiteiten in deze module (zoals `RadiologyStudy`, `RadiologyReport`, `RadiologyModality` en `MrrtReportTemplate`) erven van `BaseOpenmrsData` of `BaseOpenmrsObject`.
@@ -132,8 +132,8 @@ OpenMRS dwingt op database-niveau een strikte audit-trail af voor alle klinische
   * `voided`/`retired` (of het record logisch is verwijderd)
   * `voided_by`/`retired_by` & `date_voided`/`date_retired` (wie het record heeft verwijderd en wanneer)
   * `void_reason`/`retire_reason` (verplichte reden van verwijdering)
-* **Bewijslast in de code:** In de database-definities ([liquibase.xml](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/resources/liquibase.xml)) zijn deze audit-kolommen voor alle radiology-tabellen aanwezig. Zie bijvoorbeeld de definitie van `radiology_report`:
-  * **Aanmaak- en wijzigings-metadata (regels 256–261):**
+* **Bewijslast in de code:** In de database-definities ([liquibase.xml](file:///c:/Github/openmrs-module-radiology/api/src/main/resources/liquibase.xml)) zijn deze audit-kolommen voor alle radiology-tabellen aanwezig. Zie bijvoorbeeld de definitie van `radiology_report`:
+  * **Aanmaak- en wijzigings-metadata (regels 256â€“261):**
     ```xml
     <column name="creator" type="int" defaultValueNumeric="0">
         <constraints nullable="false" />
@@ -142,7 +142,7 @@ OpenMRS dwingt op database-niveau een strikte audit-trail af voor alle klinische
         <constraints nullable="false" />
     </column>
     ```
-  * **Verwijderings-metadata (regels 463–471 voor voiding):**
+  * **Verwijderings-metadata (regels 463â€“471 voor voiding):**
     ```xml
     <addColumn tableName="radiology_report">
         <column name="voided" type="BOOLEAN" defaultValueBoolean="false" >
@@ -164,7 +164,7 @@ De onderstaande matrix toetst de belangrijkste logging-events binnen de Radiolog
 | Event | Gelogd? | Gevoelige data | Compliant met NEN-7510 8.15? |
 | :--- | :--- | :---: | :--- |
 | **Gebruiker authenticatie (Inloggen / Uitloggen)** | **Ja** (via OpenMRS Core database/applicatielogs). | Nee | **Ja**. OpenMRS Core registreert inlogpogingen en mislukte logins met volledige metadata: *wie* (gebruikersnaam/IP), *wat* (succes/mislukt), *wanneer* (timestamp) en *waarom* (foutreden bij mislukking). |
-| **Raadplegen patiëntendossier / inzien radiology dashboard** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. NEN-7510 vereist dat inzage in patiëntgegevens herleidbaar is (read auditing). Het ontbreken van logging voor dit event betekent dat er geen metadata (*wie*, *wat*, *wanneer*) over dossierinzage beschikbaar is. |
+| **Raadplegen patiÃ«ntendossier / inzien radiology dashboard** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. NEN-7510 vereist dat inzage in patiÃ«ntgegevens herleidbaar is (read auditing). Het ontbreken van logging voor dit event betekent dat er geen metadata (*wie*, *wat*, *wanneer*) over dossierinzage beschikbaar is. |
 | **Radiology Order aanmaken (placing order)** | **Gedeeltelijk**. Alleen via database-auditing. Applicatielogs loggen dit niet omdat `logRadiologyOrderSubmission` inactief is. | Nee | **Nee**. Database-auditing legt wel *wie* (`creator`), *wat* (order) en *wanneer* (`date_created`) vast. Echter is applicatielogging voor realtime SIEM-monitoring inactief en ontbreekt de reden (*waarom*) voor creatie in de audit-trail. Activering van de huidige applicatielogmethode zou bovendien tot een PII-lek leiden. |
 | **Radiology Order inzien** | **Nee**. Noch in database-audit, noch in applicatielogs. | Ja | **Nee**. Geen logging op lees-events van individuele orders. *Wie* de order heeft ingezien en *wanneer* is niet herleidbaar. |
 | **Radiology Order stopzetten / wijzigen (discontinue)** | **Gedeeltelijk**. Database legt mutatie en reden vast via OpenMRS Core. Geen applicatielogging. | Nee | **Gedeeltelijk**. De database bevat volledige metadata: *wie* (`changed_by`), *wat* (stopzetting), *wanneer* (`date_changed`) en *waarom* (`nonCodedDiscontinueReason`). Het ontbreken van realtime applicatielogging voor externe security monitoring (SIEM) vormt echter een gap. |
@@ -180,11 +180,11 @@ De onderstaande matrix toetst de belangrijkste logging-events binnen de Radiolog
 
 ---
 
-### 3. Geïdentificeerd Beveiligingsrisico (Gap)
+### 3. GeÃ¯dentificeerd Beveiligingsrisico (Gap)
 
-Er is een ernstig privacy- en compliance-risico (lekken van PII) geïdentificeerd in de enige methode die klinische acties naar de logbestanden schrijft:
+Er is een ernstig privacy- en compliance-risico (lekken van PII) geÃ¯dentificeerd in de enige methode die klinische acties naar de logbestanden schrijft:
 
-* **Locatie in de code:** [RadiologyOrderServiceImpl.java](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/order/RadiologyOrderServiceImpl.java#L212-L220)
+* **Locatie in de code:** [RadiologyOrderServiceImpl.java](file:///c:/Github/openmrs-module-radiology/api/src/main/java/org/openmrs/module/radiology/order/RadiologyOrderServiceImpl.java#L212-L220)
   ```java
   public void logRadiologyOrderSubmission(RadiologyOrder order) {
       org.openmrs.Patient patient = order.getPatient();
@@ -197,7 +197,7 @@ Er is een ernstig privacy- en compliance-risico (lekken van PII) geïdentificeer
   }
   ```
 
-* **Risico (GDPR / NEN-7510):** Deze methode logt Personally Identifiable Information (PII) van de patiënt, zoals de volledige naam (`patient.getPersonName()`) en de geboortedatum (`patient.getBirthdate()`), in platte tekst naar de applicatielogbestanden (bijv. `catalina.out` van Tomcat). Applicatielogs worden vaak niet op hetzelfde beveiligingsniveau opgeslagen als de database en zijn toegankelijk voor systeembeheerders en ontwikkelaars die deze patiëntgegevens niet mogen inzien.
+* **Risico (GDPR / NEN-7510):** Deze methode logt Personally Identifiable Information (PII) van de patiÃ«nt, zoals de volledige naam (`patient.getPersonName()`) en de geboortedatum (`patient.getBirthdate()`), in platte tekst naar de applicatielogbestanden (bijv. `catalina.out` van Tomcat). Applicatielogs worden vaak niet op hetzelfde beveiligingsniveau opgeslagen als de database en zijn toegankelijk voor systeembeheerders en ontwikkelaars die deze patiÃ«ntgegevens niet mogen inzien.
 * **Bijkomend probleem:** Deze methode gebruikt de ongedefinieerde variabele `log` en de vervallen methode `.getModality()`, wat op dit moment zorgt voor de compileerfouten van de gehele module.
 
 * **Aanbevolen maatregel:**
@@ -213,9 +213,9 @@ Om volledig te voldoen aan de NEN-7510 8.15 normering (en de AVG/GDPR), moet het
 
 | Beveiligingsaspect | Huidige Situatie (As-Is) | Gewenste Situatie (To-Be) | Benodigde Actie(s) / Remediatie |
 | :--- | :--- | :--- | :--- |
-| **Inzage-auditing (Read Auditing)** | Er wordt **niets** gelogd wanneer een gebruiker patiëntgegevens inziet (zoals het openen van de radiology dashboard-tab, het raadplegen van orders of het inzien van rapporten). | Elke handmatige raadpleging of export van patiëntgegevens genereert een logregel op applicativeniveau (SIEM) met de metadata: *wie*, *wat* en *wanneer*. | Voeg log-statements toe aan controllers (`RadiologyReportFormController`, `RadiologyOrderDetailsPortletController`) en REST resources (`RadiologyReportResource`) bij ophaal-acties (GET). |
-| **Mutatie-auditing in applicatielogs** | Mutaties (creëren, wijzigen, verwijderen) worden alleen in de database bijgehouden. Applicatielogging voor orders (`logRadiologyOrderSubmission`) is inactief (nooit aangeroepen). | Alle mutaties op orders en rapporten worden realtime weggeschreven naar de applicatielogs ten behoeve van SIEM-monitoring. | 1. Activeer en roep `logRadiologyOrderSubmission` aan in `placeRadiologyOrder`. <br>2. Voeg vergelijkbare logs toe bij `discontinueRadiologyOrder`, `saveRadiologyReport` en `voidRadiologyReport`. |
-| **Bescherming van patiëntprivacy (PII)** | De inactieve methode `logRadiologyOrderSubmission` logt direct herleidbare patiëntgegevens (volledige naam en geboortedatum) in platte tekst. | Applicatielogs bevatten **geen direct herleidbare PII** (conform AVG). Koppeling vindt uitsluitend plaats via UUID's en accession numbers. | Vervang de parameters `patient.getPersonName()` en `patient.getBirthdate()` in de logmethode door `patient.getUuid()`. |
+| **Inzage-auditing (Read Auditing)** | Er wordt **niets** gelogd wanneer een gebruiker patiÃ«ntgegevens inziet (zoals het openen van de radiology dashboard-tab, het raadplegen van orders of het inzien van rapporten). | Elke handmatige raadpleging of export van patiÃ«ntgegevens genereert een logregel op applicativeniveau (SIEM) met de metadata: *wie*, *wat* en *wanneer*. | Voeg log-statements toe aan controllers (`RadiologyReportFormController`, `RadiologyOrderDetailsPortletController`) en REST resources (`RadiologyReportResource`) bij ophaal-acties (GET). |
+| **Mutatie-auditing in applicatielogs** | Mutaties (creÃ«ren, wijzigen, verwijderen) worden alleen in de database bijgehouden. Applicatielogging voor orders (`logRadiologyOrderSubmission`) is inactief (nooit aangeroepen). | Alle mutaties op orders en rapporten worden realtime weggeschreven naar de applicatielogs ten behoeve van SIEM-monitoring. | 1. Activeer en roep `logRadiologyOrderSubmission` aan in `placeRadiologyOrder`. <br>2. Voeg vergelijkbare logs toe bij `discontinueRadiologyOrder`, `saveRadiologyReport` en `voidRadiologyReport`. |
+| **Bescherming van patiÃ«ntprivacy (PII)** | De inactieve methode `logRadiologyOrderSubmission` logt direct herleidbare patiÃ«ntgegevens (volledige naam en geboortedatum) in platte tekst. | Applicatielogs bevatten **geen direct herleidbare PII** (conform AVG). Koppeling vindt uitsluitend plaats via UUID's en accession numbers. | Vervang de parameters `patient.getPersonName()` en `patient.getBirthdate()` in de logmethode door `patient.getUuid()`. |
 | **Logging van administratieve CRUD-acties** | Wijzigingen aan modaliteiten (bijv. MRI, CT) en rapporttemplates (MRRT) worden niet weggeschreven naar de applicatielogs. | Wijzigingen in de systeemconfiguratie of metadata-tabellen genereren een duidelijke `INFO` logregel in de applicatielogs met metadata. | Voeg `log.info` toe aan de bewerkings- en verwijderingsmethoden in de service-laag van modaliteiten en templates. |
 | **Gestructureerd Logformaat** | Bestaande logregels zijn ongestructureerde tekstregels, wat automatische verwerking en monitoring bemoeilijkt. | Alle audit-events in de applicatielogs gebruiken een gestructureerd formaat (zoals JSON of key-value pairs) voor eenvoudige SIEM-parsing. | Implementeer een gestructureerde log-helper of format-sjabloon in de module (bijv. `event=... user=... target=...`). |
 
@@ -223,10 +223,10 @@ Om volledig te voldoen aan de NEN-7510 8.15 normering (en de AVG/GDPR), moet het
 
 ### 5. Gedetailleerde Gap-Definities (Klinisch & Beveiliging)
 
-De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zijn expliciet geïdentificeerd als een **Gap** ten opzichte van de NEN-7510 8.15 / A.12.4 normering:
+De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zijn expliciet geÃ¯dentificeerd als een **Gap** ten opzichte van de NEN-7510 8.15 / A.12.4 normering:
 
 * **Gap 1: Ontbreken van Inzage-auditing (Read Auditing) op Dossiers**
-  * *Omschrijving:* Er vindt geen logging plaats wanneer een medewerker of arts de radiologie-tab van een patiëntdossier openraadt.
+  * *Omschrijving:* Er vindt geen logging plaats wanneer een medewerker of arts de radiologie-tab van een patiÃ«ntdossier openraadt.
   * *Normimpact:* Zeer kritiek. Ongeautoriseerde raadpleging van dossiers kan achteraf niet worden geaudit.
 
 * **Gap 2: Ontbreken van Inzage-auditing op Orders en Rapporten**
@@ -234,7 +234,7 @@ De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zij
   * *Normimpact:* Kritiek. Inzage in gevoelige medische resultaten is niet herleidbaar (*wie* bekeek *wat* en *wanneer*).
 
 * **Gap 3: Inactieve logging van Order-aanmaak & PII-lek**
-  * *Omschrijving:* Het indienen van een radiology order genereert op dit moment geen actieve applicatielogregel omdat de service-laag de methode `logRadiologyOrderSubmission` niet aanroept. Bovendien lekt deze methode direct herleidbare PII (volledige patiëntennaam en geboortedatum) in platte tekst, en veroorzaakt het compileerfouten.
+  * *Omschrijving:* Het indienen van een radiology order genereert op dit moment geen actieve applicatielogregel omdat de service-laag de methode `logRadiologyOrderSubmission` niet aanroept. Bovendien lekt deze methode direct herleidbare PII (volledige patiÃ«ntennaam en geboortedatum) in platte tekst, en veroorzaakt het compileerfouten.
   * *Normimpact:* Hoog. Geen actieve audit trail voor mutaties in SIEM, en schending van de AVG/GDPR-privacyrichtlijnen.
 
 * **Gap 4: Ontbreken van realtime logging bij het annuleren of stopzetten van orders**
@@ -257,7 +257,7 @@ De volgende klinische handelingen en beveiligingsgerelateerde gebeurtenissen zij
 
 ### 6. Prioriteitenlijst voor Implementatie
 
-Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellijk en in fasen worden geïmplementeerd volgens onderstaande prioriteitenlijst:
+Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellijk en in fasen worden geÃ¯mplementeerd volgens onderstaande prioriteitenlijst:
 
 #### Prioriteit 1: Corrigeren en Activeren Order-aanmaak Logging (Onmiddellijk)
 * **Doel:** Activeren van ordercreatie-auditing zonder privacy-risico's.
@@ -269,7 +269,7 @@ Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellij
 #### Prioriteit 2: Implementeren van Read-auditing (Kritiek)
 * **Doel:** Voldoen aan de wettelijke verplichting om inzage in medische dossiers herleidbaar te maken.
 * **Actie:**
-  1. Voeg logging toe in `RadiologyDashboardOrdersTabController` en `RadiologyDashboardReportsTabController` bij het laden van patiëntgegevens.
+  1. Voeg logging toe in `RadiologyDashboardOrdersTabController` en `RadiologyDashboardReportsTabController` bij het laden van patiÃ«ntgegevens.
   2. Voeg logging toe in `RadiologyReportFormController` (GET-request) bij het inzien van een specifiek rapport.
   3. Logformaat: `event=patient_record_accessed user_uuid=... patient_uuid=... type=dashboard/report`
 
@@ -289,4 +289,5 @@ Om de module NEN-7510 compliant te maken, moeten de ontbrekende logs onmiddellij
 * **Actie:**
   1. Log toevoegen aan modaliteit- en template CRUD-acties in de respectievelijke service-implementaties.
   2. Formatteer alle applicatielogs volgens een eenduidige key-value of JSON structuur.
+
 

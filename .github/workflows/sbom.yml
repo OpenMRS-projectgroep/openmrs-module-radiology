@@ -11,9 +11,6 @@ jobs:
   build-and-sbom:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: openmrs-module-radiology
 
     steps:
       # 1. Haal de code op
@@ -56,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: radiology-module-sbom
-          path: openmrs-module-radiology/docs/sbom.cdx.json
+          path: docs/sbom.cdx.json

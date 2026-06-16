@@ -59,7 +59,7 @@ Hieronder is de geactualiseerde tabel met CVSS-onderbouwingen, vectoren en concr
 
 ## 4. Strategisch Stappenplan voor Mitigatie
 
-Nu de platform-upgrade is doorgevoerd, kunnen we de resterende 90 kwetsbaarheden efficiënt mitigeren via het configureren van overrides in de parent [pom.xml](file:///c:/Github/openmrs-module-radiology/openmrs-module-radiology/pom.xml).
+Nu de platform-upgrade is doorgevoerd, kunnen we de resterende 90 kwetsbaarheden efficiënt mitigeren via het configureren van overrides in de parent [pom.xml](file:///c:/Github/openmrs-module-radiology/pom.xml).
 
 ### Actie: Inrichten van Transitieve Overrides
 Voeg de volgende dependency-definities toe aan de `<dependencyManagement>` sectie van de parent `pom.xml` om de versies van de kwetsbare bibliotheken te overridentificeren:

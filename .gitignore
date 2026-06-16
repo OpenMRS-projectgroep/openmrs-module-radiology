@@ -15,7 +15,38 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs
+# --- Java Temporary & Generated Files ---
+
+# Compiled output
+*.class
+
+# Annotation processor / generated sources
+generated-sources/
+generated-test-sources/
+apt-generated/
+.apt_generated/
+.apt_generated_tests/
+
+# Serialized Java objects
+*.ser
+
+# JVM crash & heap dumps
+hs_err_pid*
+replay_pid*
+java_pid*.hprof
+*.hprof
+
+# JVM profiling snapshots
+*.jfr
+*.jfr.gz
+
+# Java Web Start
+.jnlp-cache/
+
+# JAXB generated classes
+jaxb-impl.jar
+
+# virtual machine crash logs (kept for compatibility)
 hs_err_pid*
 replay_pid*
 
@@ -23,7 +54,6 @@ replay_pid*
 .env
 .env.local
 .env.*.local
-openmrs-module-radiology/.env
 
 # --- IDEs and Editors ---
 
@@ -89,9 +119,9 @@ build/
 # --- Dependency Managers ---
 node_modules/
 bower_components/
-openmrs-module-radiology/omod/node/
-openmrs-module-radiology/omod/node_modules/
-openmrs-module-radiology/omod/bower_components/
+omod/node/
+omod/node_modules/
+omod/bower_components/
 
 # --- OS Specific ---
 .DS_Store
