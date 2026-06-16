@@ -146,7 +146,7 @@ JUnit-tests worden automatisch uitgevoerd in de CI-pipeline (zie `.github/workfl
 
 #### All JUnit tests (API + OMOD)
 
-Vanaf de module root (`openmrs-module-radiology/`):
+Vanaf de repository root:
 
 ```bash
 mvn test

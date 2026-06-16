@@ -26,14 +26,13 @@ If you want to get into the details please look at the `omod/pom.xml`
 Build the Radiology Module and its Docker image:
 
 ```bash
-cd openmrs-module-radiology
 mvn clean package docker:build
 ```
 
 Only build the Docker image (assumes you already built the module):
 
 ```bash
-cd openmrs-module-radiology/omod
+cd omod
 mvn package docker:build
 ```
 
@@ -66,7 +65,6 @@ mvn package docker:build \
 ## Create and Run Container
 
 ```bash
-cd openmrs-module-radiology
 mvn docker:start
 ```
 
@@ -112,7 +110,6 @@ mvn docker:start -Dmysql.user=ris -Dmysql.database=ris -Dmysql.password=ris \
 ## Stop and Remove Container
 
 ```bash
-cd openmrs-module-radiology
 mvn docker:stop
 ```
 
@@ -133,7 +130,6 @@ docker volume ls
 If you want to remove the volume created by the plugin when stopping do:
 
 ```bash
-cd openmrs-module-radiology
 mvn docker:stop -Ddocker.removeVolumes=true
 ```
 
@@ -148,7 +144,6 @@ docker volume rm <enter hash of volume you want to delete>
 So build the module, create the image and run it all at once!
 
 ```bash
-cd openmrs-module-radiology
 mvn clean package docker:build docker:start
 ```
 
