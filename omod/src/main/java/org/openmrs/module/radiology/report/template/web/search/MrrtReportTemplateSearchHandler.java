@@ -52,8 +52,8 @@ public class MrrtReportTemplateSearchHandler implements SearchHandler {
                     REQUEST_PARAM_CREATOR, REQUEST_PARAM_TOTAL_COUNT })
             .build();
     
-    private final SearchConfig searchConfig = new SearchConfig("default", RestConstants.VERSION_1 + "/mrrtreporttemplate",
-            Arrays.asList("2.0.*"), searchQuery);
+    private final SearchConfig searchConfig =
+            new SearchConfig("default", RestConstants.VERSION_1 + "/mrrtreporttemplate", Arrays.asList("2.*"), searchQuery);
     
     /**
      * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#getSearchConfig()

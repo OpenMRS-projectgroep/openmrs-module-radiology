@@ -20,12 +20,25 @@ import org.junit.Test;
 import org.openmrs.Order.Urgency;
 import org.openmrs.module.radiology.report.web.RadiologyDashboardReportsTabController;
 import org.openmrs.module.radiology.web.RadiologyWebConstants;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.openmrs.api.context.Context;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.ModelAndView;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Context.class })
 public class RadiologyDashboardOrdersTabControllerTest {
     
+    
+    @Before
+    public void setUp() {
+        PowerMockito.mockStatic(Context.class);
+    }
     
     private RadiologyDashboardOrdersTabController radiologyDashboardOrdersTabController =
             new RadiologyDashboardOrdersTabController();

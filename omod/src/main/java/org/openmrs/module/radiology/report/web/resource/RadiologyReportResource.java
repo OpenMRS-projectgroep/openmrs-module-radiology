@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * {@link Resource} for {@link RadiologyReport}, supporting GET operations.
  */
 @Resource(name = RestConstants.VERSION_1 + "/radiologyreport", supportedClass = RadiologyReport.class,
-        supportedOpenmrsVersions = { "2.0.*" })
+        supportedOpenmrsVersions = { "2.*" })
 public class RadiologyReportResource extends DataDelegatingCrudResource<RadiologyReport> {
     
     
