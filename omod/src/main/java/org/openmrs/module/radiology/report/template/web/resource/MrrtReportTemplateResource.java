@@ -31,7 +31,7 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.RestCons
  *
  */
 @Resource(name = RestConstants.VERSION_1 + "/mrrtreporttemplate", supportedClass = MrrtReportTemplate.class,
-        supportedOpenmrsVersions = { "2.0.*" })
+        supportedOpenmrsVersions = { "2.*" })
 public class MrrtReportTemplateResource extends DataDelegatingCrudResource<MrrtReportTemplate> {
     
     

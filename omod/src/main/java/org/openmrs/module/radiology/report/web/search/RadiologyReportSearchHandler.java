@@ -65,7 +65,7 @@ public class RadiologyReportSearchHandler implements SearchHandler {
                     .build();
     
     private final SearchConfig searchConfig =
-            new SearchConfig("default", RestConstants.VERSION_1 + "/radiologyreport", Arrays.asList("2.0.*"), searchQuery);
+            new SearchConfig("default", RestConstants.VERSION_1 + "/radiologyreport", Arrays.asList("2.*"), searchQuery);
     
     /**
      * @see org.openmrs.module.webservices.rest.web.resource.api.SearchHandler#getSearchConfig()

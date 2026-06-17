@@ -49,7 +49,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaCompilerVersion>1.8</javaCompilerVersion>
 		<openMRSVersion>2.8.7</openMRSVersion>
-		<openmrs-legacyui-version>1.2</openmrs-legacyui-version>
+		<openmrs-legacyui-version>1.8.4</openmrs-legacyui-version>
 		<openmrs-webservicesrest-version>2.40.0</openmrs-webservicesrest-version>
 		<maven-formatter-plugin-version>1.6.0</maven-formatter-plugin-version>
 		<maven-formatter-plugin-style-java>${project.parent.basedir}/tools/formatter/java.xml</maven-formatter-plugin-style-java>
@@ -66,7 +66,7 @@
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -267,6 +267,21 @@
 					<groupId>io.fabric8</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
 					<version>0.38.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.5.4</version>
+					<configuration>
+						<argLine>
+							@{argLine}
+							--add-opens java.base/java.lang=ALL-UNNAMED
+							--add-opens java.base/java.lang.reflect=ALL-UNNAMED
+							--add-opens java.base/java.io=ALL-UNNAMED
+							--add-opens java.base/java.util=ALL-UNNAMED
+							--add-exports java.xml/jdk.xml.internal=ALL-UNNAMED
+						</argLine>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>

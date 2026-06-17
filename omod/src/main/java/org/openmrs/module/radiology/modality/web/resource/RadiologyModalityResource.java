@@ -30,7 +30,7 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.RestCons
  * {@link Resource} for {@link RadiologyModality}.
  */
 @Resource(name = RestConstants.VERSION_1 + "/radiologymodality", supportedClass = RadiologyModality.class,
-        supportedOpenmrsVersions = { "2.0.*" }, order = 1)
+        supportedOpenmrsVersions = { "2.*" }, order = 1)
 public class RadiologyModalityResource extends MetadataDelegatingCrudResource<RadiologyModality> {
     
     

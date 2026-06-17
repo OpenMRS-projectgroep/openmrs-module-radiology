@@ -28,7 +28,7 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.RestCons
  * {@link Resource} for {@link RadiologyOrder}, supporting GET operations.
  */
 @Resource(name = RestConstants.VERSION_1 + "/radiologyorder", supportedClass = RadiologyOrder.class,
-        supportedOpenmrsVersions = { "2.0.*" })
+        supportedOpenmrsVersions = { "2.*" })
 public class RadiologyOrderResource extends DataDelegatingCrudResource<RadiologyOrder> {
     
     
