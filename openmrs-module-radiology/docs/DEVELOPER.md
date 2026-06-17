@@ -15,6 +15,7 @@
   * [Running tests locally](#running-tests-locally)
   * [Test inventory](#test-inventory)
   * [Gap analysis and backlog](#gap-analysis-and-backlog)
+4. [Non-functional requirements](NFR.md)
 
 ## Overview
 
@@ -100,6 +101,8 @@ mvn clean test
 ##### Code Coverage Norm & Onderbouwing
 
 Binnen de Radiologie-module hanteren we een **target code coverage van minimaal 75%** voor de gecombineerde codebase. 
+
+De volledige set meetbare kwaliteitsnormen, inclusief cyclomatische complexiteit, coverage, performance, betrouwbaarheid en security, staat in [Meetbare non-functional requirements](NFR.md).
 
 ###### Waarom geen 100%?
 Blind streven naar 100% code coverage is niet effectief en leidt tot inefficiënt gebruik van ontwikkeltijd. Het dwingt ontwikkelaars om triviale onderdelen te testen (zoals getters/setters, constante-klassen zoals `RadiologyWebConstants`, configuration mappings en boilerplate code) of om complexe OpenMRS Core libraries overmatig te mocken. Dit verhoogt de onderhoudslast van de testsuite aanzienlijk, zonder dat het daadwerkelijk kritieke bugs voorkomt.
