@@ -57,7 +57,7 @@
 		<docker.maven.plugin.fabric8.version>0.48.1</docker.maven.plugin.fabric8.version>
 		<powermock.version>2.0.9</powermock.version>
 		<sonar.organization>openmrs-projectgroep</sonar.organization>
-		<sonar.projectKey>openmrs-projectgroep_openmrs-module-radiology</sonar.projectKey>
+		<sonar.projectKey>OpenMRS-projectgroep_openmrs-module-radiology</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
